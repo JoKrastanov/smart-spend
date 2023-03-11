@@ -37,8 +37,6 @@ export class BankAccount {
     throw new InsufficientBalanceError("Not enought balance");
   };
 
-  // TODO: Add Sender Bankaccount + generate and return transaction objects to store
-
   send = async (money: Money) => {
     try {
       if (!this.checkCurrency(money.currency)) {
@@ -59,8 +57,10 @@ export class BankAccount {
         this.balance.subtract(money.amount);
         return;
       }
-    } catch (InsufficientBalanceError) {
-      console.log(InsufficientBalanceError.getMessage());
+    } catch (err) {
+      if (err instanceof InsufficientBalanceError) {
+        console.log(err.getMessage());
+      }
     }
   };
 

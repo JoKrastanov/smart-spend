@@ -30,10 +30,4 @@ app.listen(PORT, () => {
     "NL68ABNA4398662022",
     new Money(1000, CurrencyCode.EUR)
   );
-  bankAcc.recieve(new Money(1001, CurrencyCode.EUR)).then(() => {
-    console.log(bankAcc.balance.toString());
-  });
-  bankAcc.send(new Money(2002, CurrencyCode.EUR)).then(() => {
-    console.log(bankAcc.balance.toString());
-  });
 });
