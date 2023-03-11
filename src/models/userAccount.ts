@@ -1,0 +1,35 @@
+import { encryptPassword } from "../helpers/usePasswordHandling/encryptPassword";
+import { AccountType } from "../types/accountTypes";
+import { Country } from "../types/countries";
+import { Person } from "./person";
+
+export class UserAccount extends Person {
+  email: string;
+  password: string;
+  passwordSalt: string;
+  companyId: string;
+  department: string;
+  accountType: AccountType;
+
+  constructor(
+    firstName: string,
+    lastName: string,
+    address: string,
+    phoneNumber: string,
+    country: Country,
+    companyId: string,
+    email: string,
+    password: string,
+    department: string,
+    accountType: AccountType
+  ) {
+    super(firstName, lastName, address, phoneNumber, country);
+    this.email = email;
+    const encryptedPassword = encryptPassword(password)
+    this.password = encryptedPassword.hash;
+    this.passwordSalt = encryptedPassword.salt;
+    this.companyId = companyId;
+    this.department = department;
+    this.accountType = accountType;
+  }
+}
