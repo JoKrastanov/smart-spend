@@ -1,4 +1,3 @@
-import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 
 export class Transaction {
   id: string;
@@ -8,7 +7,7 @@ export class Transaction {
   isDraft: boolean;
   status: string;
 
-  constructor() {
-    this.id = generateUUID();
+  constructor(id: string) {
+    this.id = id;
   }
 }

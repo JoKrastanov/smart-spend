@@ -1,4 +1,3 @@
-import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { Money } from "./money";
 
 export class BankAccount {
@@ -11,6 +10,7 @@ export class BankAccount {
   reserved: Money;
 
   constructor(
+    id: string,
     companyId: string,
     name: string,
     department: string,
@@ -18,7 +18,7 @@ export class BankAccount {
     balance: Money,
     reserved: Money
   ) {
-    this.id = generateUUID();
+    this.id = id;
     this.companyId = companyId;
     this.name = name;
     this.department = department;

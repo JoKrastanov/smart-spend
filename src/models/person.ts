@@ -1,4 +1,3 @@
-import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { Country } from "../types/countries";
 
 export class Person {
@@ -10,13 +9,14 @@ export class Person {
   country: Country;
 
   constructor(
+    id: string,
     firstName: string,
     lastName: string,
     address: string,
     phoneNumber: string,
     country: Country
   ) {
-    this.id = generateUUID();
+    this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.address = address;
