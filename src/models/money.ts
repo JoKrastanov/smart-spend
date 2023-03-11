@@ -9,7 +9,19 @@ export class Money {
     this.currency = currency;
   }
 
-    getFormatted = () : string => {
-        return `${this.amount / 100} ${this.currency}`
-  }
+  subtract = (amount: number) => {
+    this.amount -= amount;
+  };
+
+  add = (amount: number) => {
+    this.amount += amount;
+  };
+
+  getAmountConvertable = (): number => {
+    return this.amount / 100;
+  };
+
+  toString = (): string => {
+    return `${this.amount / 100} ${this.currency}`;
+  };
 }
