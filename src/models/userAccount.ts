@@ -12,6 +12,7 @@ export class UserAccount extends Person {
   accountType: AccountType;
 
   constructor(
+    id: string,
     firstName: string,
     lastName: string,
     address: string,
@@ -23,7 +24,7 @@ export class UserAccount extends Person {
     department: string,
     accountType: AccountType
   ) {
-    super(firstName, lastName, address, phoneNumber, country);
+    super(id, firstName, lastName, address, phoneNumber, country);
     this.email = email;
     const encryptedPassword = encryptPassword(password)
     this.password = encryptedPassword.hash;

@@ -1,9 +1,6 @@
 # Build output
 dist
 
-# Environment variables file
-.env
-
 # Logs
 logs
 *.log
