@@ -1,19 +1,24 @@
-FROM node:14
-
-# Create app directory
-WORKDIR /usr/src/app
-
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
-COPY package*.json ./
-
-RUN npm install
-# If you are building your code for production
-# RUN npm ci --only=production
-
-# Bundle app source
+FROM node:12-alpine as base
+# Alpine images missing dependencies
+RUN apk add --no-cache git
+WORKDIR /usr/app
+# Default environment (build + run time)
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
+EXPOSE 8080
+# App and dev dependencies
+COPY ["package.json", "yarn.lock", "./"]
+RUN yarn install --production=false
+# App source
 COPY . .
 
-EXPOSE 8080
-CMD [ "nodemon", "src/app.ts" ]
+# Build step for production
+FROM base
+RUN yarn build
+# Prune dev dependencies, modules ts files, yarn cache after build
+RUN yarn install --production && \
+    yarn autoclean --init && \
+    echo *.ts >> .yarnclean && \
+    yarn autoclean --force && \
+    yarn cache clean
+CMD ["node", "dist/index.js"]
