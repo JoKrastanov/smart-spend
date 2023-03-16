@@ -8,8 +8,6 @@ import { CurrencyCode } from "./types/currencies";
 import { Company } from "./models/company";
 import { generateUUID } from "./helpers/useUUIDHandling/generateUUID";
 import { Country } from "./types/countries";
-import { getConvertedValue } from "./helpers/useTransactions/getConvertedValue";
-import { BankAccountDTO } from "./dtos/bankAccountDTO";
 import { UserAccount } from "./models/userAccount";
 import { AccountType } from "./types/accountTypes";
 import { encryptPassword } from "./helpers/usePasswordHandling/encryptPassword";
@@ -79,12 +77,6 @@ app.listen(PORT, async () => {
   await bankAcc.send(new Money(500, CurrencyCode.USD));
   await bankAcc1.recieve(new Money(500, CurrencyCode.USD));
 
-  // console.log(
-  //   await (
-  //     await getConvertedValue(CurrencyCode.USD, CurrencyCode.EUR, 500)
-  //   ).toString()
-  // );
-
-  // console.log(bankAcc.balance.toString());
-  // console.log(bankAcc1.balance.toString());
+  console.log(bankAcc.balance.toString());
+  console.log(bankAcc1.balance.toString());
 });
