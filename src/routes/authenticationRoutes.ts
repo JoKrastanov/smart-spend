@@ -14,21 +14,22 @@ const users: UserAccount[] = [];
 
 authRouter.post("/login", async (req, res) => {
   try {
+    if (users.length === 0) {
+      res.status(404).json({});
+    }
     users.forEach(async (user) => {
       if (user.email !== req.body.email) return;
       const validPassword = await bcrypt.compare(
         req.body.password,
         user.password
       );
-      if (!validPassword)
-        return res
-          .status(401)
-          .send({ message: new LogInError("error").getMessage() });
-      // Create and assign token
+      if (!validPassword) {
+        res.status(401).send({ message: new LogInError("error").getMessage() });
+      }
       const payload = { id: user.id, user_type: user.accountType };
-      const token = jwt.sign(payload, process.env.JWT_SECRET);
-
-      res.status(200).json({ token: token }).header("auth-token", token);
+      const token = await jwt.sign(payload, process.env.JWT_SECRET);
+      res.header("auth-token", token);
+      res.status(200).json({ token: token });
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -66,11 +67,10 @@ authRouter.post("/register", async (req, res) => {
 });
 
 authRouter.get("/money", (req, res) => {
-  let token = req.headers.authorization;
-  if (!token)
-    return res.status(401).send("Access Denied / Unauthorized request");
-
   try {
+    let token = req.headers.authorization;
+    if (!token)
+      return res.status(401).send("Access Denied / Unauthorized request");
     token = token.split(" ")[1]; // Remove Bearer from string
 
     if (token === "null" || !token)
