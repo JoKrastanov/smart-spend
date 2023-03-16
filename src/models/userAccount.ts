@@ -21,14 +21,14 @@ export class UserAccount extends Person {
     companyId: string,
     email: string,
     password: string,
+    salt: string,
     department: string,
     accountType: AccountType
   ) {
     super(id, firstName, lastName, address, phoneNumber, country);
     this.email = email;
-    const encryptedPassword = encryptPassword(password)
-    this.password = encryptedPassword.hash;
-    this.passwordSalt = encryptedPassword.salt;
+    this.password = password;
+    this.passwordSalt = salt;
     this.companyId = companyId;
     this.department = department;
     this.accountType = accountType;

@@ -9,6 +9,10 @@ import { Company } from "./models/company";
 import { generateUUID } from "./helpers/useUUIDHandling/generateUUID";
 import { Country } from "./types/countries";
 import { getConvertedValue } from "./helpers/useTransactions/getConvertedValue";
+import { BankAccountDTO } from "./dtos/bankAccountDTO";
+import { UserAccount } from "./models/userAccount";
+import { AccountType } from "./types/accountTypes";
+import { encryptPassword } from "./helpers/usePasswordHandling/encryptPassword";
 
 dotenv.config();
 const app: Express = express();
@@ -51,15 +55,36 @@ app.listen(PORT, async () => {
     new Money(1000, CurrencyCode.EUR)
   );
 
+  const password = await encryptPassword("password123");
+  if(password instanceof Error) {
+    console.log(password.message)
+    return;
+  }
+  const user = new UserAccount(
+    generateUUID(),
+    "Joan",
+    "Krastanov",
+    "Johannes van der Walsweeg",
+    "+311239144",
+    Country.Bulgaria,
+    company.id,
+    "joankrastanov@gmail.com",
+    password.hash,
+    password.salt,
+    "Software Department",
+    AccountType.Admin
+  );
+  console.log(user);
+
   await bankAcc.send(new Money(500, CurrencyCode.USD));
   await bankAcc1.recieve(new Money(500, CurrencyCode.USD));
 
-  console.log(
-    await (
-      await getConvertedValue(CurrencyCode.USD, CurrencyCode.EUR, 500)
-    ).toString()
-  );
+  // console.log(
+  //   await (
+  //     await getConvertedValue(CurrencyCode.USD, CurrencyCode.EUR, 500)
+  //   ).toString()
+  // );
 
-  console.log(bankAcc.balance.toString());
-  console.log(bankAcc1.balance.toString());
+  // console.log(bankAcc.balance.toString());
+  // console.log(bankAcc1.balance.toString());
 });
