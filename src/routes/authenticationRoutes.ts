@@ -1,36 +1,33 @@
 import { Router } from "express";
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import { encryptPassword } from "../helpers/usePasswordHandling/encryptPassword";
 import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { UserAccount } from "../models/userAccount";
 import { LogInError } from "../errors/LoginError";
+import { signJWTToken } from "../helpers/useAuth/signJWTToken";
+import { verifyJWTToken } from "../helpers/useAuth/verifyJWTToken";
 
-dotenv.config();
 export const authRouter = Router();
-
 const users: UserAccount[] = [];
 
 authRouter.post("/login", async (req, res) => {
   try {
+    const { email, password } = req.body;
+
     if (users.length === 0) {
       res.status(404).json({});
     }
-    users.forEach(async (user) => {
-      if (user.email !== req.body.email) return;
-      const validPassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-      );
-      if (!validPassword) {
-        res.status(401).send({ message: new LogInError("error").getMessage() });
-      }
-      const payload = { id: user.id, user_type: user.accountType };
-      const token = await jwt.sign(payload, process.env.JWT_SECRET);
-      res.header("auth-token", token);
-      res.status(200).json({ token: token });
-    });
+    const user = users.find((user) => user.email === email);
+    if (!user) {
+      res.status(404).json({});
+    }
+    const loginSuccessful = await user.login(password);
+    if (!loginSuccessful) {
+      res.status(401).send({ message: new LogInError("error").getMessage() });
+    }
+
+    const token = signJWTToken(user.id, user.accountType);
+    res.header("auth-token", token);
+    res.status(200).json(token);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -38,28 +35,40 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/register", async (req, res) => {
   try {
-    const encryptedPassword = await encryptPassword(req.body.password);
+    const {
+      firstName,
+      lastName,
+      address,
+      phone,
+      country,
+      companyId,
+      email,
+      password,
+      department,
+      accountType,
+    } = req.body;
+
+    const encryptedPassword = await encryptPassword(password);
     if (encryptedPassword instanceof Error) {
       res.status(500).json({ message: encryptedPassword.message });
       return;
     }
     const newUser: UserAccount = new UserAccount(
       generateUUID(),
-      req.body.firstName,
-      req.body.lastName,
-      req.body.address,
-      req.body.phone,
-      req.body.country,
-      req.body.companyId,
-      req.body.email,
+      firstName,
+      lastName,
+      address,
+      phone,
+      country,
+      companyId,
+      email,
       encryptedPassword.hash,
       encryptedPassword.salt,
-      req.body.department,
-      req.body.accountType
+      department,
+      accountType
     );
     users.push(newUser);
-    const payload = { id: newUser.id, user_type: newUser.accountType };
-    const token = jwt.sign(payload, process.env.JWT_SECRET);
+    const token = signJWTToken(newUser.id, newUser.accountType);
     res.status(201).json(token);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -68,16 +77,15 @@ authRouter.post("/register", async (req, res) => {
 
 authRouter.get("/money", (req, res) => {
   try {
-    let token = req.headers.authorization;
-    if (!token)
-      return res.status(401).send("Access Denied / Unauthorized request");
-    token = token.split(" ")[1]; // Remove Bearer from string
+    const { authorization } = req.headers;
 
+    if (!authorization)
+      return res.status(401).send("Access Denied / Unauthorized request");
+    let token = authorization.split(" ")[1]; // Remove Bearer from string
     if (token === "null" || !token)
       return res.status(401).send("Unauthorized request");
-
-    let verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
-    if (!verifiedUser) return res.status(401).send("Unauthorized request");
+    if (!verifyJWTToken(token))
+      return res.status(401).send("Unauthorized request");
 
     res.status(200).send("Welcome");
   } catch (error) {
