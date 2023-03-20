@@ -4,7 +4,7 @@ import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { UserAccount } from "../models/userAccount";
 import { LogInError } from "../errors/LoginError";
 import { signJWTToken } from "../helpers/useAuth/signJWTToken";
-import { verifyJWTToken } from "../helpers/useAuth/verifyJWTToken";
+import { userIsAdmin, verifyJWTToken } from "../helpers/useAuth/verifyJWTToken";
 
 export const authRouter = Router();
 const users: UserAccount[] = [];
@@ -75,7 +75,7 @@ authRouter.post("/register", async (req, res) => {
   }
 });
 
-authRouter.get("/money", (req, res) => {
+authRouter.get("/money", async (req, res) => {
   try {
     const { authorization } = req.headers;
 
@@ -84,7 +84,7 @@ authRouter.get("/money", (req, res) => {
     let token = authorization.split(" ")[1]; // Remove Bearer from string
     if (token === "null" || !token)
       return res.status(401).send("Unauthorized request");
-    if (!verifyJWTToken(token))
+    if (!(await verifyJWTToken(token)))
       return res.status(401).send("Unauthorized request");
 
     res.status(200).send("Welcome");
