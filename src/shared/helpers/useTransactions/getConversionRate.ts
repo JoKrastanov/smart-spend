@@ -1,6 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
-import { CurrencyCode } from "../../types/currencies";
+import { CurrencyCode } from "../../shared/types/currencies";
 
 dotenv.config();
 const requestURL = process.env.CONVERT_CURRENCY_API_URL;

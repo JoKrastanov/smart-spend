@@ -1,5 +1,5 @@
-import { InsufficientBalanceError } from "../errors/InsufficientBalance";
-import { getConvertedValue } from "../helpers/useTransactions/getConvertedValue";
+import { InsufficientBalanceError } from "../errors/InsufficientBalanceError";
+import { getConvertedValue } from "../../helpers/useTransactions/getConvertedValue";
 import { CurrencyCode } from "../types/currencies";
 import { Money } from "./money";
 
