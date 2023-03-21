@@ -21,8 +21,8 @@ export class AuthController {
       const user = users.find((user) => user.email === email);
       if (!user) {
         res.status(404).json({});
-      }
-      const loginSuccessful = await user.login(password);
+      } 
+      const loginSuccessful = await this.authService.loginCheck(password, user.password);
       if (!loginSuccessful) {
         res.status(401).send({ message: new LogInError("error").getMessage() });
       }

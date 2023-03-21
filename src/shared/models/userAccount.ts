@@ -33,12 +33,4 @@ export class UserAccount extends Person {
     this.department = department;
     this.accountType = accountType;
   }
-
-  login = async (inputPassword: string) => {
-    try {
-      return await bcrypt.compare(inputPassword, this.password);
-    } catch (error) {
-      return new Error(error);
-    }
-  };
 }

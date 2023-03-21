@@ -42,6 +42,14 @@ export class AuthService {
         
     }
 
+    loginCheck = async (inputPassword: string, userPassword: string) => {
+      try {
+        return await bcrypt.compare(inputPassword, userPassword);
+      } catch (error) {
+        return new Error(error);
+      }
+    };
+
     encryptPassword = async (inputPassword: string): Promise<IPasswordHash | Error> => {
         try {
           const salt = await bcrypt.genSalt(10);
