@@ -1,7 +1,7 @@
 import { AuthService } from "../services/authService";
-import { generateUUID } from "../../../../shared/helpers/useUUIDHandling/generateUUID";
-import { LogInError } from "../../../../shared/errors/LoginError";
-import { UserAccount } from "../../../../shared/models/userAccount";
+import { generateUUID } from "../middleware/useUUIDHandling/generateUUID";
+import { LogInError } from "../errors/LoginError";
+import { UserAccount } from "../models/userAccount";
 
 export class AuthController {
   private authService: AuthService;
