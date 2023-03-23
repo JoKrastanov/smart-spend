@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import express, { Express } from "express";
 
 import { licenseRouter } from "./routes/licenseRoutes";
+import { companyRouter } from "./routes/companyRoutes";
 
 dotenv.config();
 const app: Express = express();
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 
 // * App Routes
 app.use('/api/license', licenseRouter);
+app.use('/api/company', companyRouter);
 
 app.listen(PORT, async () => {
   console.log("Server is running at port:", PORT);
