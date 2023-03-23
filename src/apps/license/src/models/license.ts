@@ -1,13 +1,18 @@
+import { CurrencyCode } from "../types/currencies";
 import { LicenseTypes } from "../types/licenseTypes";
 import { Money } from "./money";
 
 export class License {
   id: string;
   companyId: string;
-  price: Money;
+  basePrice: Money;
   datePurchased: Date;
-  maxEmployeeNumber: Number;
-  maxBankAccountNumber: Number;
+  lastPayment: Date;
+  maxEmployeeNumber: number;
+  registeredEmployees: number;
+  pricePerEmployee: number;
+  maxBankAccountsNumber: number;
+  registeredBankAccounts: number;
   licenseType: LicenseTypes;
 
   constructor(
@@ -19,8 +24,21 @@ export class License {
   ) {
     this.id = id;
     this.companyId = companyId;
-    this.price = price;
+    this.basePrice = price;
     this.datePurchased = datePurchased;
     this.licenseType = licenseType;
+  }
+
+  getFullLicensePrice = (): Money => {
+    const fullPrice = this.basePrice.amount + (this.pricePerEmployee * this.registeredEmployees);
+    return new Money(fullPrice, CurrencyCode.EUR)
+  }
+
+  canRegisterEmployee = () => {
+    return this.registeredEmployees < this.maxEmployeeNumber;
+  }
+
+  canAddBankAccount = () => {
+    return this.registeredBankAccounts < this.maxBankAccountsNumber;
   }
 }

@@ -1,5 +1,5 @@
 import { AuthService } from "../services/authService";
-import { generateUUID } from "../middleware/useUUIDHandling/generateUUID";
+import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { LogInError } from "../errors/LoginError";
 import { UserAccount } from "../models/userAccount";
 

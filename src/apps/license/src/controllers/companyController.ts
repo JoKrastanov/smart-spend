@@ -1,3 +1,4 @@
+import { RegisterCompanyError } from "../errors/RegisterCompanyError";
 import { CompanyService } from "../services/companyService";
 
 export class CompanyController {
@@ -6,4 +7,16 @@ export class CompanyController {
   constructor() {
     this.service = new CompanyService();
   }
+
+  registerCompany = async (req, res) => {
+    try {
+      const { name, country, address } = req.body;
+      const newCompany = this.service.registerCompany(name, country, address);
+      if (!newCompany) {
+        res.status(401).send({ message: new RegisterCompanyError("error").getMessage() });
+      }
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 }
