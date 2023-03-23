@@ -3,8 +3,10 @@ FROM node:14-alpine
 
 # Set environment variables
 ENV JWT_SECRET=SIF%Gka982SKGI9S8gkagjed9FKAQ19T
+ENV JWT_REFRESH_SECRET=39DKAPkd0d@adjtJGOD04GITdk23Fl3a
 ENV REFRESH_SECRET=K%IKsksk39tikfkKFKGK30fKKwkKG3g@
 ENV JWT_EXPIRES_IN=20m
+ENV JWT_REFRESH_EXPIRES_IN=1d
 
 # Set the working directory to /app
 WORKDIR /app

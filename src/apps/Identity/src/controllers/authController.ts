@@ -21,14 +21,22 @@ export class AuthController {
       const user = users.find((user) => user.email === email);
       if (!user) {
         res.status(404).json({});
-      } 
-      const loginSuccessful = await this.authService.loginCheck(password, user.password);
+      }
+      const loginSuccessful = await this.authService.loginCheck(
+        password,
+        user.password
+      );
       if (!loginSuccessful) {
         res.status(401).send({ message: new LogInError("error").getMessage() });
       }
 
+      const refreshToken = this.authService.signJWTRefreshToken(
+        user.id,
+        user.accountType
+      );
       const token = this.authService.signJWTToken(user.id, user.accountType);
       res.header("auth-token", token);
+      res.header("refresh-auth-token", refreshToken);
       res.status(200).json(token);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -51,7 +59,9 @@ export class AuthController {
         accountType,
       } = req.body;
 
-      const encryptedPassword = await this.authService.encryptPassword(password);
+      const encryptedPassword = await this.authService.encryptPassword(
+        password
+      );
       if (encryptedPassword instanceof Error) {
         res.status(500).json({ message: encryptedPassword.message });
         return;
@@ -71,10 +81,17 @@ export class AuthController {
         accountType
       );
       users.push(newUser);
+
       const token = this.authService.signJWTToken(
         newUser.id,
         newUser.accountType
       );
+      const refreshToken = this.authService.signJWTRefreshToken(
+        newUser.id,
+        newUser.accountType
+      );
+      res.header("refresh-auth-token", refreshToken);
+      res.header("auth-token", token);
       res.status(201).json(token);
     } catch (error) {
       res.status(500).json({ message: error.message });
