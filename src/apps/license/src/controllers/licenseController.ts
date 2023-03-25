@@ -7,7 +7,21 @@ export class LicenseController {
     this.service = new LicenseService();
   }
 
-  register = (req, res) => {
+  subscribeBasic = (req, res) => {
+    try {
+        
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  subscribePro = (req, res) => {
+    try {
+        
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+  subscribeEnterprise = (req, res) => {
     try {
         
     } catch (error) {
