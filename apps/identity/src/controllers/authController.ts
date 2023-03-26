@@ -1,7 +1,7 @@
+import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
 import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { LogInError } from "../errors/LoginError";
-import { UserAccount } from "../models/userAccount";
 
 export class AuthController {
   private authService: AuthService;
@@ -10,7 +10,7 @@ export class AuthController {
     this.authService = new AuthService();
   }
 
-  logIn = async (req, res) => {
+  logIn = async (req: Request, res: Response) => {
     try {
       const users = this.authService.getUsers();
       const { email, password } = req.body;
@@ -43,9 +43,8 @@ export class AuthController {
     }
   };
 
-  register = async (req, res) => {
+  register = async (req: Request, res: Response) => {
     try {
-      const users = this.authService.getUsers();
       const {
         firstName,
         lastName,
@@ -59,15 +58,7 @@ export class AuthController {
         accountType,
       } = req.body;
 
-      const encryptedPassword = await this.authService.encryptPassword(
-        password
-      );
-      if (encryptedPassword instanceof Error) {
-        res.status(500).json({ message: encryptedPassword.message });
-        return;
-      }
-      const newUser: UserAccount = new UserAccount(
-        generateUUID(),
+      const newUser = await this.authService.addUser(
         firstName,
         lastName,
         address,
@@ -75,12 +66,10 @@ export class AuthController {
         country,
         companyId,
         email,
-        encryptedPassword.hash,
-        encryptedPassword.salt,
+        password,
         department,
         accountType
       );
-      users.push(newUser);
 
       const token = this.authService.signJWTToken(
         newUser.id,
@@ -92,13 +81,14 @@ export class AuthController {
       );
       res.header("refresh-auth-token", refreshToken);
       res.header("auth-token", token);
+
       res.status(201).json(token);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
   };
 
-  freeMoney = async (req, res) => {
+  freeMoney = async (req: Request, res: Response) => {
     try {
       const { authorization } = req.headers;
 

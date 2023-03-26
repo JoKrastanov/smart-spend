@@ -5,17 +5,81 @@ import bcrypt from "bcrypt";
 import { UserAccount } from "../models/userAccount";
 import { AccountType } from "../types/accountTypes";
 import { IPasswordHash } from "../types/passwordHash";
+import { Country } from "../types/countries";
+import { RabbitMQService } from "./RabbitMQService";
+import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 
 dotenv.config();
 
 export class AuthService {
   private users: UserAccount[];
+  private rabbitMQService: RabbitMQService;
+
   constructor() {
     this.users = [];
+    this.rabbitMQService = new RabbitMQService();
+    this.init();
   }
+
+  private init = async () => {
+    await this.rabbitMQService.connect();
+    this.rabbitMQService.consumeMessages("users", async (message) => {
+      const user = this.addUser(
+        message.firstName,
+        message.lastName,
+        message.address,
+        message.phoneNumber,
+        message.country,
+        message.companyId,
+        message.email,
+        message.password,
+        message.department,
+        message.accountType
+      );
+      this.rabbitMQService.sendMessage("users", user)
+    });
+  };
 
   getUsers = (): UserAccount[] => {
     return this.users;
+  };
+
+  addUser = async (
+    firstName: string,
+    lastName: string,
+    address: string,
+    phoneNumber: string,
+    country: Country,
+    companyId: string,
+    email: string,
+    password: string,
+    department: string,
+    accountType: AccountType
+  ): Promise<UserAccount> => {
+    try {
+      const encryptedPassword = await this.encryptPassword(password);
+      if (encryptedPassword instanceof Error) {
+        throw encryptedPassword;
+      }
+      const newUser = new UserAccount(
+        generateUUID(),
+        firstName,
+        lastName,
+        address,
+        phoneNumber,
+        country,
+        companyId,
+        email,
+        encryptedPassword.hash,
+        encryptedPassword.salt,
+        department,
+        accountType
+      );
+      this.users.push(newUser);
+      return newUser;
+    } catch (error) {
+      return null;
+    }
   };
 
   loginCheck = async (inputPassword: string, userPassword: string) => {

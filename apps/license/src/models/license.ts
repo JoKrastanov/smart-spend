@@ -103,10 +103,12 @@ export class License {
   };
 
   canRegisterEmployee = () => {
-    return this.registeredEmployees < this.maxEmployeeNumber;
+    return this.registeredEmployees < this.maxEmployeeNumber && this.active;
   };
 
   canAddBankAccount = () => {
-    return this.registeredBankAccounts < this.maxBankAccountsNumber;
+    return (
+      this.registeredBankAccounts < this.maxBankAccountsNumber && this.active
+    );
   };
 }

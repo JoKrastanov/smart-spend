@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import { RegisterCompanyError } from "../errors/RegisterCompanyError";
 import { CompanyService } from "../services/companyService";
 
@@ -8,11 +9,11 @@ export class CompanyController {
     this.service = new CompanyService();
   }
 
-  getAllCompanies = (req, res) => {
+  getAllCompanies = (req: Request, res: Response) => {
     res.status(200).send(this.service.getCompanies());
   };
 
-  getCompany = (req, res) => {
+  getCompany = (req: Request, res: Response) => {
     const { id } = req.params;
     const company = this.service.getCompany(id);
     if (!company) {
@@ -24,7 +25,7 @@ export class CompanyController {
     res.status(200).send(company);
   };
 
-  registerCompany = async (req, res) => {
+  registerCompany = async (req: Request, res: Response) => {
     try {
       const { name, country, address } = req.body;
       const newCompany = this.service.registerCompany(name, country, address);
@@ -35,20 +36,6 @@ export class CompanyController {
         return;
       }
       res.status(201).send(newCompany);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
-
-  registerEmployee = async (req, res) => {
-    try {
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
-
-  registerBankAccount = async (req, res) => {
-    try {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import { AccountType } from "../types/accountTypes";
 import { Country } from "../types/countries";
 import { Person } from "./person";

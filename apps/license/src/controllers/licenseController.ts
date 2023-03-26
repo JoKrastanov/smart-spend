@@ -10,8 +10,8 @@ export class LicenseController {
     this.service = new LicenseService();
   }
 
-  getAllLicenses = () => {
-    return this.service.getAllLicenses();
+  getAllLicenses = (req: Request, res: Response) => {
+    res.status(200).json(this.service.getAllLicenses());
   };
 
   subscribe = (req: Request, res: Response) => {
@@ -46,6 +46,51 @@ export class LicenseController {
       res.status(201).json(newLicense);
     } catch (error) {
       res.status(500).json({ message: error.message });
+    }
+  };
+
+  activate = (req: Request, res: Response) => {
+    try {
+      const { companyId } = req.params;
+      const license = this.service.activateLicense(companyId);
+      if (!license) {
+        res.sendStatus(404);
+      }
+      res.status(200).json(license);
+    } catch (error) {
+      res.status(500).json({ message: error.getMessage() });
+    }
+  };
+
+  registerEmployee = (req: Request, res: Response) => {
+    try {
+      const { companyId } = req.params;
+      const {
+        firstName,
+        lastName,
+        address,
+        phone,
+        country,
+        email,
+        password,
+        department,
+        accountType,
+      } = req.body;
+      this.service.registerEmployee(
+        firstName,
+        lastName,
+        address,
+        phone,
+        country,
+        companyId,
+        email,
+        password,
+        department,
+        accountType
+      );
+      res.sendStatus(200)
+    } catch (error) {
+      res.status(500).json({ message: error.getMessage() });
     }
   };
 }
