@@ -3,7 +3,7 @@ import { Company } from "../models/company";
 import { Country } from "../types/countries";
 
 export class CompanyService {
-    companies: Company[];
+    private companies: Company[];
 
     constructor () {
         this.companies = [];
@@ -20,6 +20,7 @@ export class CompanyService {
     }
 
     getCompany = (id: string) => {
+        console.log(this.companies.find(company => company.id === id));
         return this.companies.find(company => company.id === id);
     }
 }

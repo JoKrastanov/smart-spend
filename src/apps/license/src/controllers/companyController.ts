@@ -14,7 +14,7 @@ export class CompanyController {
       const newCompany = this.service.registerCompany(name, country, address);
       if (!newCompany) {
         res
-          .status(401)
+          .status(404)
           .send({ message: new RegisterCompanyError("error").getMessage() });
         return;
       }

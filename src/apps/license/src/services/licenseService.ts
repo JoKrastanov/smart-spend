@@ -1,17 +1,21 @@
 import { generateLicenseID } from "../helpers/generateLicenseID";
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { License } from "../models/license";
-import { Money } from "../models/money";
-import { CurrencyCode } from "../types/currencies";
 import { LicenseTypes } from "../types/licenseTypes";
 import { CompanyService } from "./companyService";
 
 export class LicenseService {
-  companyService: CompanyService;
+  private companyService: CompanyService;
+  private licenses: License[];
 
   constructor() {
     this.companyService = new CompanyService();
+    this.licenses = [];
   }
+
+  getAllLicenses = () => {
+    return this.licenses;
+  };
 
   issueLicense = (
     companyId: string,
@@ -25,18 +29,22 @@ export class LicenseService {
       licenseType === LicenseTypes.Basic ||
       licenseType === LicenseTypes.Pro
     ) {
-      return new License(
+      const license = new License(
         generateLicenseID(),
         getCurrentUtcTime(),
-        LicenseTypes.Basic
+        licenseType
       );
+      this.licenses.push(license);
+      return license;
     }
     if (!requestedEmployeeNumber || !requestedBankAccountNumber) return;
-    return new License(
+    const license = new License(
       generateLicenseID(),
       getCurrentUtcTime(),
-      LicenseTypes.Enterprise,
+      licenseType,
       requestedEmployeeNumber
     );
+    this.licenses.push(license);
+    return license;
   };
 }
