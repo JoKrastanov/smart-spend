@@ -8,6 +8,22 @@ export class CompanyController {
     this.service = new CompanyService();
   }
 
+  getAllCompanies = (req, res) => {
+    res.status(200).send(this.service.getCompanies());
+  };
+
+  getCompany = (req, res) => {
+    const { id } = req.params;
+    const company = this.service.getCompany(id);
+    if (!company) {
+      res
+        .status(404)
+        .json({ message: "Company with specified Id does not exist" });
+      return;
+    }
+    res.status(200).send(company);
+  };
+
   registerCompany = async (req, res) => {
     try {
       const { name, country, address } = req.body;
@@ -24,19 +40,17 @@ export class CompanyController {
     }
   };
 
-  getAllCompanies = (req, res) => {
-    res.status(200).send(this.service.getCompanies());
+  registerEmployee = async (req, res) => {
+    try {
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
   };
 
-  getCompany = (req, res) => {
-    const { id } = req.params;
-    const company = this.service.getCompany(id);
-    if (!company) {
-      res
-        .status(404)
-        .json({ message: "Company with specified Id does not exist" });
-      return;
+  registerBankAccount = async (req, res) => {
+    try {
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    res.status(200).send(company);
   };
 }
