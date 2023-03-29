@@ -1,8 +1,9 @@
 version: "3"
 services:
     rabbitmq3:
+        hostname: rabbitmq
         container_name: "rabbitmq"
-        image: rabbitmq:3.8-management-alpine
+        image: rabbitmq:3.8-management
         environment:
             - RABBITMQ_DEFAULT_USER=guest
             - RABBITMQ_DEFAULT_PASS=guest
@@ -12,14 +13,27 @@ services:
             # HTTP management UI
             - '15672:15672'
     identity-service:
-        build: 
+        build:
             context: ./apps/identity
         ports:
             - "4000:4000"
         env_file:
             - ./apps/identity/.env
+        depends_on:
+            - rabbitmq3
     license-service:
         build:
             context: ./apps/license
         ports:
             - "5000:5000"
+        env_file:
+            - ./apps/identity/.env
+    bankaccount-service:
+        build:
+            context: ./apps/bankaccount
+        ports:
+            - "6000:6000"
+        depends_on:
+            - rabbitmq3
+        env_file:
+            - ./apps/identity/.env

@@ -1,4 +1,6 @@
 import { connect, Channel } from "amqplib";
+import dotenv from "dotenv";
+dotenv.config();
 
 export interface MessageHandler {
   (message: any): Promise<void>;
@@ -6,9 +8,10 @@ export interface MessageHandler {
 
 export class RabbitMQService {
   private channel: Channel | null = null;
+  private conUrl = process.env.AMQP_URL || "amqp://localhost"
 
   async connect() {
-    const conn = await connect("amqp://localhost");
+    const conn = await connect(this.conUrl);
     this.channel = await conn.createChannel();
   }
 
@@ -52,36 +55,3 @@ export class RabbitMQService {
     }
   }
 }
-
-// export const sendRegisteredEmployee = async (
-//   firstName: string,
-//   lastName: string,
-//   address: string,
-//   phoneNumber: string,
-//   country: Country,
-//   companyId: string,
-//   email: string,
-//   password: string,
-//   department: string,
-//   accountType: AccountType
-// ) => {
-//   const connection = await connect("amqp://localhost");
-//   const channel = await connection.createChannel();
-//   await channel.assertQueue(employeeQueue, { durable: false });
-//   channel.sendToQueue(
-//     employeeQueue,
-//     Buffer.from(
-//       JSON.stringify({
-//         firstName,
-//         lastName,
-//         address,
-//         phoneNumber,
-//         country,
-//         companyId,
-//         email,
-//         password,
-//         department,
-//         accountType,
-//       })
-//     )
-//   );

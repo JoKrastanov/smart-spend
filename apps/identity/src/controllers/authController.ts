@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
-import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { LogInError } from "../errors/LoginError";
 
 export class AuthController {

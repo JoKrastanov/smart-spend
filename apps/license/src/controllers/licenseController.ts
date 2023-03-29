@@ -58,7 +58,7 @@ export class LicenseController {
       }
       res.status(200).json(license);
     } catch (error) {
-      res.status(500).json({ message: error.getMessage() });
+      res.status(500).json({ message: error.message });
     }
   };
 
@@ -88,7 +88,28 @@ export class LicenseController {
         department,
         accountType
       );
-      res.sendStatus(200)
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(500).json({ message: error.getMessage() });
+    }
+  };
+
+  registerBankAccount = (req: Request, res: Response) => {
+    try {
+      const { companyId } = req.params;
+      const { name, department, IBAN, balance } = req.body;
+      if (!name || !department || !IBAN || !balance) {
+        res.status(400).json({ message: "Invalid data" });
+        return;
+      }
+      this.service.registerBankAccount(
+        companyId,
+        name,
+        department,
+        IBAN,
+        balance
+      );
+      res.sendStatus(200);
     } catch (error) {
       res.status(500).json({ message: error.getMessage() });
     }

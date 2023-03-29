@@ -1,24 +1,38 @@
-import { CompanyHasLicenseError } from "../errors/CompanyHasLicenseError";
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { License } from "../models/license";
+import { Money } from "../models/money";
 import { AccountType } from "../types/accountTypes";
 import { Country } from "../types/countries";
 import { LicenseTypes } from "../types/licenseTypes";
+import { CompanyService } from "./companyService";
 import { RabbitMQService } from "./RabbitMQService";
 
 export class LicenseService {
+  private companyService: CompanyService;
   private licenses: License[];
   private rabbitMQService: RabbitMQService;
 
   constructor() {
     this.licenses = [];
+    this.companyService = new CompanyService();
     this.rabbitMQService = new RabbitMQService();
+    this.companyService.registerCompany(
+      "Company",
+      Country.Bulgaria,
+      "Botevgradsko shose 7",
+      "123"
+    );
     this.init();
   }
 
   private init = async () => {
-    await this.rabbitMQService.connect();
-    await this.rabbitMQService.createQueue("users");
+    try {
+      await this.rabbitMQService.connect();
+      await this.rabbitMQService.createQueue("users");
+      await this.rabbitMQService.createQueue("bank-accounts");
+    } catch (error) {
+      console.log(`%c${error}`, "color:red");
+    }
   };
 
   getAllLicenses = () => {
@@ -35,8 +49,8 @@ export class LicenseService {
     requestedEmployeeNumber?: number,
     requestedBankAccountNumber?: number
   ) => {
-    const companyLicense = this.getLicenseByCompany(companyId);
-    if (companyLicense) throw new CompanyHasLicenseError("error");
+    const company = this.companyService.getCompany(companyId);
+    if (!company) return null;
     if (
       licenseType === LicenseTypes.Basic ||
       licenseType === LicenseTypes.Pro
@@ -62,10 +76,27 @@ export class LicenseService {
     return license;
   };
 
-  registerBankAccount = (companyId: string) => {
-    const license = this.getLicenseByCompany(companyId);
-    if (!license || !license.canAddBankAccount()) {
-      return null;
+  registerBankAccount = async (
+    companyId: string,
+    name: string,
+    department: string,
+    IBAN: string,
+    balance: Money
+  ) => {
+    try {
+      const license = this.getLicenseByCompany(companyId);
+      if (!license || !license.canAddBankAccount()) {
+        return null;
+      }
+      await this.rabbitMQService.sendMessage("bank-accounts", {
+        companyId,
+        name,
+        department,
+        IBAN,
+        balance,
+      });
+    } catch (error) {
+      return console.log(error);
     }
   };
 
