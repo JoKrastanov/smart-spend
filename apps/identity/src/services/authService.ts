@@ -22,22 +22,26 @@ export class AuthService {
   }
 
   private init = async () => {
-    await this.rabbitMQService.connect();
-    this.rabbitMQService.consumeMessages("users", async (message) => {
-      const user = this.addUser(
-        message.firstName,
-        message.lastName,
-        message.address,
-        message.phoneNumber,
-        message.country,
-        message.companyId,
-        message.email,
-        message.password,
-        message.department,
-        message.accountType
-      );
-      this.rabbitMQService.sendMessage("users", user)
-    });
+    try {
+      await this.rabbitMQService.connect();
+      this.rabbitMQService.consumeMessages("users", async (message) => {
+        const user = this.addUser(
+          message.firstName,
+          message.lastName,
+          message.address,
+          message.phoneNumber,
+          message.country,
+          message.companyId,
+          message.email,
+          message.password,
+          message.department,
+          message.accountType
+        );
+        this.rabbitMQService.sendMessage("users", user);
+      });
+    } catch (error) {
+      console.log(`%c${error}`, "color:red");
+    }
   };
 
   getUsers = (): UserAccount[] => {

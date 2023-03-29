@@ -14,17 +14,21 @@ export class BankAccountService {
   }
 
   private init = async () => {
-    await this.rabbitMQService.connect();
-    this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
-      const newBankAccount = this.addBankAccount(
-        message.companyId,
-        message.name,
-        message.department,
-        message.IBAN,
-        message.balance
-      );
-      this.bankAccounts.push(newBankAccount);
-    });
+    try {
+      await this.rabbitMQService.connect();
+      this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
+        const newBankAccount = this.addBankAccount(
+          message.companyId,
+          message.name,
+          message.department,
+          message.IBAN,
+          message.balance
+        );
+        this.bankAccounts.push(newBankAccount);
+      });
+    } catch (error) {
+      console.log(`%c${error}`, "color:red");
+    }
   };
 
   getCompanies = () => {
