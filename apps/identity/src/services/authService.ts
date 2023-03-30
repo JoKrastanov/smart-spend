@@ -40,7 +40,7 @@ export class AuthService {
         this.rabbitMQService.sendMessage("users", user);
       });
     } catch (error) {
-      console.log(`%c${error}`, "color:red");
+      console.log(error);
     }
   };
 

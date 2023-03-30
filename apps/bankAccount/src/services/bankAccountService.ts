@@ -27,7 +27,7 @@ export class BankAccountService {
         this.bankAccounts.push(newBankAccount);
       });
     } catch (error) {
-      console.log(`%c${error}`, "color:red");
+      console.log(error);
     }
   };
 

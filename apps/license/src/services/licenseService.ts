@@ -31,7 +31,7 @@ export class LicenseService {
       await this.rabbitMQService.createQueue("users");
       await this.rabbitMQService.createQueue("bank-accounts");
     } catch (error) {
-      console.log(`%c${error}`, "color:red");
+      console.log(error);
     }
   };
 

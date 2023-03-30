@@ -10,30 +10,30 @@ services:
         ports:
             # AMQP protocol port
             - '5672:5672'
-            # HTTP management UI
-            - '15672:15672'
     identity-service:
+        env_file:
+            - ./apps/identity/.env
+        environment:
+            - AMQP_URL=amqp://guest:guest@rabbitmq:5672
         build:
             context: ./apps/identity
         ports:
             - "4000:4000"
+    license-service:
         env_file:
             - ./apps/identity/.env
-        depends_on:
-            - rabbitmq3
-    license-service:
+        environment:
+            - AMQP_URL=amqp://guest:guest@rabbitmq:5672
         build:
             context: ./apps/license
         ports:
             - "5000:5000"
+    bankaccount-service:
         env_file:
             - ./apps/identity/.env
-    bankaccount-service:
+        environment:
+            - AMQP_URL=amqp://guest:guest@rabbitmq:5672
         build:
             context: ./apps/bankaccount
         ports:
             - "6000:6000"
-        depends_on:
-            - rabbitmq3
-        env_file:
-            - ./apps/identity/.env
