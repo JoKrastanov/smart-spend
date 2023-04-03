@@ -1,38 +1,36 @@
 version: "3"
 services:
-    rabbitmq3:
-        hostname: rabbitmq
-        container_name: "rabbitmq"
-        image: rabbitmq:3.8-management
-        environment:
-            - RABBITMQ_DEFAULT_USER=guest
-            - RABBITMQ_DEFAULT_PASS=guest
+    rabbitmq:
+        image: rabbitmq:3.10-rc-management-alpine
         ports:
-            # AMQP protocol port
-            - '5672:5672'
+      # AMQP protocol port
+        - "5672:5672"
+      # HTTP management UI
+        - "15672:15672"
+
     identity-service:
+        depends_on:
+             - rabbitmq
         env_file:
             - ./apps/identity/.env
-        environment:
-            - AMQP_URL=amqp://guest:guest@rabbitmq:5672
         build:
             context: ./apps/identity
         ports:
             - "4000:4000"
     license-service:
+        depends_on:
+             - rabbitmq
         env_file:
             - ./apps/identity/.env
-        environment:
-            - AMQP_URL=amqp://guest:guest@rabbitmq:5672
         build:
             context: ./apps/license
         ports:
             - "5000:5000"
     bankaccount-service:
+        depends_on:
+             - rabbitmq
         env_file:
             - ./apps/identity/.env
-        environment:
-            - AMQP_URL=amqp://guest:guest@rabbitmq:5672
         build:
             context: ./apps/bankaccount
         ports:

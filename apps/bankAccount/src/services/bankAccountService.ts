@@ -16,26 +16,33 @@ export class BankAccountService {
   private init = async () => {
     try {
       await this.rabbitMQService.connect();
+      await this.rabbitMQService.createQueue("bank-accounts-response");
       this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
+        const bankBalance = new Money(message.balance, message.currency);
         const newBankAccount = this.addBankAccount(
           message.companyId,
           message.name,
           message.department,
           message.IBAN,
-          message.balance
+          bankBalance
         );
-        this.bankAccounts.push(newBankAccount);
+        if (newBankAccount) {
+          this.bankAccounts.push(newBankAccount);
+        }
+        this.rabbitMQService.sendMessage("bank-accounts-response", {
+          message: newBankAccount ? "created" : null,
+        });
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  getCompanies = () => {
+  getBankAccounts = () => {
     return this.bankAccounts;
   };
 
-  getCompany = (IBAN: string) => {
+  getBankAccount = (IBAN: string) => {
     return this.bankAccounts.find((bank) => bank.IBAN === IBAN);
   };
 
@@ -56,5 +63,27 @@ export class BankAccountService {
     );
     this.bankAccounts.push(newBankAccount);
     return newBankAccount;
+  };
+
+  transferMoney = async (
+    IBANfrom: string,
+    IBANto: string,
+    amount: number
+  ): Promise<boolean> => {
+    try {
+      const sender = this.getBankAccount(IBANfrom);
+      const moneyToSend = new Money(amount, sender.balance.currency);
+      const reciever = this.getBankAccount(IBANto);
+      if (!sender || !reciever) {
+        return false;
+      }
+      return (
+        (await sender.send(moneyToSend)) &&
+        (await reciever.recieve(moneyToSend))
+      );
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 }

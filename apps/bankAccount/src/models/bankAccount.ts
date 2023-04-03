@@ -34,10 +34,10 @@ export class BankAccount {
 
   checkBalance = (amount: number): boolean | InsufficientBalanceError => {
     if (this.balance.amount >= amount) return true;
-    throw new InsufficientBalanceError("Not enought balance");
+    return new InsufficientBalanceError("Not enought balance");
   };
 
-  send = async (money: Money) => {
+  send = async (money: Money): Promise<boolean> => {
     try {
       if (!this.checkCurrency(money.currency)) {
         const convertedMoney = await getConvertedValue(
@@ -46,25 +46,23 @@ export class BankAccount {
           money.getAmountConvertable()
         );
         if (
-          convertedMoney instanceof Money &&
-          this.checkBalance(money.amount)
+          !(convertedMoney instanceof Money) ||
+          !this.checkBalance(money.amount)
         ) {
-          this.balance.subtract(convertedMoney.amount);
+          return false;
         }
-        return;
+        this.balance.subtract(convertedMoney.amount);
+        return true;
       }
-      if (this.checkBalance(money.amount)) {
-        this.balance.subtract(money.amount);
-        return;
-      }
-    } catch (err) {
-      if (err instanceof InsufficientBalanceError) {
-        console.log(err.getMessage());
-      }
+      if (!this.checkBalance(money.amount)) return false;
+      this.balance.subtract(money.amount);
+      return true;
+    } catch (error) {
+      throw error;
     }
   };
 
-  recieve = async (money: Money) => {
+  recieve = async (money: Money): Promise<boolean> => {
     try {
       if (!this.checkCurrency(money.currency)) {
         const convertedMoney = await getConvertedValue(
@@ -74,12 +72,12 @@ export class BankAccount {
         );
         if (!(convertedMoney instanceof Money)) return;
         this.balance.add(convertedMoney.amount);
-        return;
+        return true;
       }
       this.balance.add(money.amount);
-      return;
-    } catch (Error) {
-      console.log(Error);
+      return true;
+    } catch (error) {
+      throw error;
     }
   };
 }

@@ -94,24 +94,32 @@ export class LicenseController {
     }
   };
 
-  registerBankAccount = (req: Request, res: Response) => {
+  registerBankAccount = async (req: Request, res: Response) => {
     try {
       const { companyId } = req.params;
-      const { name, department, IBAN, balance } = req.body;
-      if (!name || !department || !IBAN || !balance) {
+      const { name, department, IBAN, balance, currency } = req.body;
+      if (!name || !department || !IBAN || !balance || !currency) {
         res.status(400).json({ message: "Invalid data" });
         return;
       }
-      this.service.registerBankAccount(
+      const response = await this.service.registerBankAccount(
         companyId,
         name,
         department,
         IBAN,
-        balance
+        balance,
+        currency
       );
-      res.sendStatus(200);
+      if (response === null) {
+        res.status(500).json({
+          message:
+            "There was an error creating the bank account, please try again!",
+        });
+        return;
+      }
+      res.status(200).json({ messagee: "OK" });
     } catch (error) {
-      res.status(500).json({ message: error.getMessage() });
+      res.status(500).json({ message: error });
     }
   };
 }

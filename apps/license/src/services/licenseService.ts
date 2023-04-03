@@ -3,6 +3,7 @@ import { License } from "../models/license";
 import { Money } from "../models/money";
 import { AccountType } from "../types/accountTypes";
 import { Country } from "../types/countries";
+import { CurrencyCode } from "../types/currencies";
 import { LicenseTypes } from "../types/licenseTypes";
 import { CompanyService } from "./companyService";
 import { RabbitMQService } from "./RabbitMQService";
@@ -81,8 +82,9 @@ export class LicenseService {
     name: string,
     department: string,
     IBAN: string,
-    balance: Money
-  ) => {
+    balance: number,
+    currency: CurrencyCode
+  ): Promise<String> => {
     try {
       const license = this.getLicenseByCompany(companyId);
       if (!license || !license.canAddBankAccount()) {
@@ -94,9 +96,21 @@ export class LicenseService {
         department,
         IBAN,
         balance,
+        currency
       });
+      let response;
+      await this.rabbitMQService.consumeMessages(
+        "bank-accounts-response",
+        async (message) => {
+          if (message.message !== "created") {
+            response = null;
+          }
+          response = message.message;
+        }
+      );
+      return response;
     } catch (error) {
-      return console.log(error);
+      throw error;
     }
   };
 

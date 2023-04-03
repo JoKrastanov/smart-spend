@@ -8,7 +8,7 @@ export interface MessageHandler {
 
 export class RabbitMQService {
   private channel: Channel | null = null;
-  private conUrl = process.env.AMQP_URL || "amqp://localhost"
+  private conUrl = process.env.AMQP_URL || "amqp://guest:guest@localhost:5672"
 
   async connect() {
     const conn = await connect(this.conUrl);
