@@ -1,37 +1,55 @@
 version: "3"
 services:
-    rabbitmq:
-        image: rabbitmq:3.10-rc-management-alpine
-        ports:
-      # AMQP protocol port
-        - "5672:5672"
-      # HTTP management UI
-        - "15672:15672"
-
-    identity-service:
-        depends_on:
-             - rabbitmq
-        env_file:
-            - ./apps/identity/.env
-        build:
-            context: ./apps/identity
-        ports:
-            - "4000:4000"
-    license-service:
-        depends_on:
-             - rabbitmq
-        env_file:
-            - ./apps/identity/.env
-        build:
-            context: ./apps/license
-        ports:
-            - "5000:5000"
-    bankaccount-service:
-        depends_on:
-             - rabbitmq
-        env_file:
-            - ./apps/identity/.env
-        build:
-            context: ./apps/bankaccount
-        ports:
-            - "6000:6000"
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    hostname: rabbitmq
+    container_name: rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - mynetwork
+  identity-service:
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./apps/identity/.env
+    build:
+      context: ./apps/identity
+    ports:
+      - "4000:4000"
+    networks:
+      - mynetwork
+  license-service:
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./apps/identity/.env
+    build:
+      context: ./apps/license
+    ports:
+      - "5000:5000"
+    networks:
+      - mynetwork
+  bankaccount-service:
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - ./apps/identity/.env
+    build:
+      context: ./apps/bankaccount
+    ports:
+      - "6000:6000"
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+    driver: bridge
