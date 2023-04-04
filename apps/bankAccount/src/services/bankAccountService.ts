@@ -16,7 +16,7 @@ export class BankAccountService {
   private init = async () => {
     try {
       await this.rabbitMQService.connect();
-      await this.rabbitMQService.createQueue("bank-accounts-response");
+      await this.rabbitMQService.createQueue("bank-accounts");
       this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
         const bankBalance = new Money(message.balance, message.currency);
         const newBankAccount = this.addBankAccount(
@@ -33,6 +33,7 @@ export class BankAccountService {
           message: newBankAccount ? "created" : null,
         });
       });
+      await this.rabbitMQService.createQueue("bank-accounts-response");
     } catch (error) {
       console.log(error);
     }

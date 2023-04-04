@@ -24,6 +24,7 @@ export class AuthService {
   private init = async () => {
     try {
       await this.rabbitMQService.connect();
+      await this.rabbitMQService.createQueue("users");
       this.rabbitMQService.consumeMessages("users", async (message) => {
         const user = this.addUser(
           message.firstName,
