@@ -111,4 +111,16 @@ export class License {
       this.registeredBankAccounts < this.maxBankAccountsNumber && this.active
     );
   };
+
+  registerBankAccount = () => {
+    if(!this.canAddBankAccount()) return false;
+    this.registeredBankAccounts++;
+    return true;
+  }
+
+  registerEmployee = () => {
+    if(!this.canRegisterEmployee()) return false;
+    this.registeredEmployees++;
+    return true;
+  }
 }

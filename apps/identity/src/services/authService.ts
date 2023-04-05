@@ -109,43 +109,4 @@ export class AuthService {
       return new Error(error);
     }
   };
-
-  verifyJWTToken = async (token: string) => {
-    return await jwt.verify(token, process.env.JWT_SECRET);
-  };
-
-  signJWTToken = (userId: string, accountType: AccountType) => {
-    const payload = { id: userId, user_type: accountType };
-    return jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
-  };
-
-  signJWTRefreshToken = (userId: string, accountType: AccountType) => {
-    const payload = { id: userId, user_type: accountType };
-    return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
-    });
-  };
-
-  userIsAdmin = async (token: string) => {
-    return (
-      (await jwt.verify(token, process.env.JWT_SECRET).user_type) ===
-      AccountType.Admin
-    );
-  };
-
-  userIsManager = async (token: string) => {
-    return (
-      (await jwt.verify(token, process.env.JWT_SECRET).user_type) ===
-      AccountType.Manager
-    );
-  };
-
-  userIsUser = async (token: string) => {
-    return (
-      (await jwt.verify(token, process.env.JWT_SECRET).user_type) ===
-      AccountType.User
-    );
-  };
 }

@@ -108,6 +108,7 @@ export class LicenseService {
           response = message.message;
         }
       );
+      license.registerBankAccount();
       return response;
     } catch (error) {
       throw error;
@@ -143,6 +144,7 @@ export class LicenseService {
         department,
         accountType,
       });
+      license.registerEmployee()
     } catch (error) {
       return console.log(error);
     }

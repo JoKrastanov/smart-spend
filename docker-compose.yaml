@@ -50,7 +50,7 @@ services:
             - "6000:6000"
         networks:
             - mynetwork
-    bankaccount-service1:
+    bankaccount-service_2:
         depends_on:
             rabbitmq:
                 condition: service_healthy

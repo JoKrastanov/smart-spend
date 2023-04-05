@@ -1,12 +1,15 @@
+import { JWTAuthentication } from "authentication-validation/lib"
 import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
 import { LogInError } from "../errors/LoginError";
 
 export class AuthController {
   private authService: AuthService;
+  private jwtAuth;
 
   constructor() {
     this.authService = new AuthService();
+    this.jwtAuth = JWTAuthentication();
   }
 
   logIn = async (req: Request, res: Response) => {
@@ -28,12 +31,11 @@ export class AuthController {
       if (!loginSuccessful) {
         res.status(401).send({ message: new LogInError("error").getMessage() });
       }
-
-      const refreshToken = this.authService.signJWTRefreshToken(
+      const refreshToken = this.jwtAuth.signJWTRefreshToken(
         user.id,
         user.accountType
       );
-      const token = this.authService.signJWTToken(user.id, user.accountType);
+      const token = this.jwtAuth.signJWTToken(user.id, user.accountType);
       res.header("auth-token", token);
       res.header("refresh-auth-token", refreshToken);
       res.status(200).json(token);
@@ -70,11 +72,11 @@ export class AuthController {
         accountType
       );
 
-      const token = this.authService.signJWTToken(
+      const token = this.jwtAuth.signJWTToken(
         newUser.id,
         newUser.accountType
       );
-      const refreshToken = this.authService.signJWTRefreshToken(
+      const refreshToken = this.jwtAuth.signJWTRefreshToken(
         newUser.id,
         newUser.accountType
       );
@@ -96,7 +98,7 @@ export class AuthController {
       let token = authorization.split(" ")[1]; // Remove Bearer from string
       if (token === "null" || !token)
         return res.status(401).send("Unauthorized request");
-      if (!(await this.authService.verifyJWTToken(token)))
+      if (!(await this.jwtAuth.verifyJWTToken(token)))
         return res.status(401).send("Unauthorized request");
 
       res.status(200).send("Welcome");
