@@ -10,13 +10,31 @@ export class LicenseController {
     this.service = new LicenseService();
   }
 
-  getAllLicenses = (req: Request, res: Response) => {
+  getAllLicenses = async (req: Request, res: Response) => {
+    const { token, refresh } = req.headers;
+    if (
+      !(await this.service.verifyBearerToken(
+        token as string,
+        refresh as string
+      ))
+    ) {
+      return res.status(401).send("Unauthorized request");
+    }
     res.status(200).json(this.service.getAllLicenses());
   };
 
-  subscribe = (req: Request, res: Response) => {
+  subscribe = async (req: Request, res: Response) => {
     try {
+      const { token, refresh } = req.headers;
       const { companyId } = req.params;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
       const {
         licenseType,
         requestedEmployeeNumber,
@@ -49,8 +67,17 @@ export class LicenseController {
     }
   };
 
-  activate = (req: Request, res: Response) => {
+  activate = async (req: Request, res: Response) => {
     try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
       const { companyId } = req.params;
       const license = this.service.activateLicense(companyId);
       if (!license) {
@@ -62,8 +89,17 @@ export class LicenseController {
     }
   };
 
-  registerEmployee = (req: Request, res: Response) => {
+  registerEmployee = async (req: Request, res: Response) => {
     try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
       const { companyId } = req.params;
       const {
         firstName,
@@ -96,6 +132,15 @@ export class LicenseController {
 
   registerBankAccount = async (req: Request, res: Response) => {
     try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
       const { companyId } = req.params;
       const { name, department, IBAN, balance, currency } = req.body;
       if (!name || !department || !IBAN || !balance || !currency) {

@@ -1,6 +1,8 @@
+import dotenv from "dotenv";
+import { JWTAuthentication } from "authentication-validation/lib";
+
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { License } from "../models/license";
-import { Money } from "../models/money";
 import { AccountType } from "../types/accountTypes";
 import { Country } from "../types/countries";
 import { CurrencyCode } from "../types/currencies";
@@ -8,13 +10,17 @@ import { LicenseTypes } from "../types/licenseTypes";
 import { CompanyService } from "./companyService";
 import { RabbitMQService } from "./RabbitMQService";
 
+dotenv.config();
+
 export class LicenseService {
   private companyService: CompanyService;
   private licenses: License[];
+  private jwtAuth;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
     this.licenses = [];
+    this.jwtAuth = JWTAuthentication();
     this.companyService = new CompanyService();
     this.rabbitMQService = new RabbitMQService();
     this.companyService.registerCompany(
@@ -34,6 +40,24 @@ export class LicenseService {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  verifyBearerToken = async (
+    authorization: string | string[],
+    refresh: string | string[]
+  ): Promise<boolean> => {
+    if (!authorization || !refresh) {
+      return false;
+    }
+    if (authorization === "null" || !authorization) {
+      return false;
+    }
+    if (!(await this.jwtAuth.verifyJWTToken(authorization))) {
+      if (!(await this.jwtAuth.verifyRefreshToken(refresh))) {
+        return false;
+      }
+    }
+    return true;
   };
 
   getAllLicenses = () => {
@@ -96,7 +120,7 @@ export class LicenseService {
         department,
         IBAN,
         balance,
-        currency
+        currency,
       });
       let response;
       await this.rabbitMQService.consumeMessages(
@@ -144,7 +168,7 @@ export class LicenseService {
         department,
         accountType,
       });
-      license.registerEmployee()
+      license.registerEmployee();
     } catch (error) {
       return console.log(error);
     }

@@ -1,17 +1,25 @@
 import { Request, Response } from "express";
 import { BankAccountService } from "../services/bankAccountService";
-import { Money } from "../models/money";
 
 export class BankAccountController {
-  private bankService: BankAccountService;
+  private service: BankAccountService;
 
   constructor() {
-    this.bankService = new BankAccountService();
+    this.service = new BankAccountService();
   }
 
-  getByCompany = (req: Request, res: Response) => {
+  getByCompany = async (req: Request, res: Response) => {
+    const { token, refresh } = req.headers;
+    if (
+      !(await this.service.verifyBearerToken(
+        token as string,
+        refresh as string
+      ))
+    ) {
+      return res.status(401).send("Unauthorized request");
+    }
     const { IBAN } = req.params;
-    const company = this.bankService.getBankAccount(IBAN);
+    const company = this.service.getBankAccount(IBAN);
     if (!company) {
       res.sendStatus(404);
       return;
@@ -19,15 +27,33 @@ export class BankAccountController {
     res.status(200).send(company);
   };
 
-  getAllCompanies = (req: Request, res: Response) => {
-    const companies = this.bankService.getBankAccounts();
+  getAllCompanies = async (req: Request, res: Response) => {
+    const { token, refresh } = req.headers;
+    if (
+      !(await this.service.verifyBearerToken(
+        token as string,
+        refresh as string
+      ))
+    ) {
+      return res.status(401).send("Unauthorized request");
+    }
+    const companies = this.service.getBankAccounts();
     res.status(200).send(companies);
   };
 
   sendMoney = async (req: Request, res: Response) => {
+    const { token, refresh } = req.headers;
+    if (
+      !(await this.service.verifyBearerToken(
+        token as string,
+        refresh as string
+      ))
+    ) {
+      return res.status(401).send("Unauthorized request");
+    }
     const { IBAN } = req.params;
-    const { IBANReciever, amount} = req.body;
-    const sendStatus = await this.bankService.transferMoney(
+    const { IBANReciever, amount } = req.body;
+    const sendStatus = await this.service.transferMoney(
       IBAN,
       IBANReciever,
       amount

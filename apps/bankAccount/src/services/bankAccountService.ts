@@ -1,14 +1,21 @@
+import dotenv from "dotenv";
+import { JWTAuthentication } from "authentication-validation/lib";
+
 import { generateUUID } from "../helpers/generateUUID";
 import { BankAccount } from "../models/bankAccount";
 import { Money } from "../models/money";
 import { RabbitMQService } from "./RabbitMQService";
 
+dotenv.config();
+
 export class BankAccountService {
   private bankAccounts: BankAccount[];
+  private jwtAuth;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
     this.bankAccounts = [];
+    this.jwtAuth = JWTAuthentication();
     this.rabbitMQService = new RabbitMQService();
     this.init();
   }
@@ -37,6 +44,24 @@ export class BankAccountService {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  verifyBearerToken = async (
+    authorization: string | string[],
+    refresh: string | string[]
+  ): Promise<boolean> => {
+    if (!authorization || !refresh) {
+      return false;
+    }
+    if (authorization === "null" || !authorization) {
+      return false;
+    }
+    if (!(await this.jwtAuth.verifyJWTToken(authorization))) {
+      if (!(await this.jwtAuth.verifyRefreshToken(refresh))) {
+        return false;
+      }
+    }
+    return true;
   };
 
   getBankAccounts = () => {

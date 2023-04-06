@@ -3,16 +3,16 @@ import { AuthService } from "../services/authService";
 import { LogInError } from "../errors/LoginError";
 
 export class AuthController {
-  private authService: AuthService;
+  private service: AuthService;
 
   constructor() {
-    this.authService = new AuthService();
+    this.service = new AuthService();
   }
 
   logIn = async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-      const login = await this.authService.loginCheck(email, password);
+      const login = await this.service.loginCheck(email, password);
       if (!login) {
         res.status(401).send({ message: new LogInError("error").getMessage() });
       }
@@ -38,7 +38,7 @@ export class AuthController {
         department,
         accountType,
       } = req.body;
-      const newUser = await this.authService.addUser(
+      const newUser = await this.service.addUser(
         firstName,
         lastName,
         address,
@@ -60,11 +60,10 @@ export class AuthController {
 
   freeMoney = async (req: Request, res: Response) => {
     try {
-      const { authorization } = req.headers;
-
-      if (!authorization)
+      const { token, refresh } = req.headers;
+      if (!token)
         return res.status(401).send("Access Denied / Unauthorized request");
-      if(!await this.authService.verifyBearerToken(authorization)) {
+      if(!await this.service.verifyBearerToken(token, refresh)) {
         return res.status(401).send("Unauthorized request");
       }
       res.status(200).send("Welcome");

@@ -28,7 +28,7 @@ export class AuthService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("users");
       this.rabbitMQService.consumeMessages("users", async (message) => {
-        const user = this.addUser(
+        const user = await this.addUser(
           message.firstName,
           message.lastName,
           message.address,
@@ -38,10 +38,9 @@ export class AuthService {
           message.email,
           message.password,
           message.department,
-          message.accountType,
-          true
+          message.accountType
         );
-        this.rabbitMQService.sendMessage("users", user);
+        this.rabbitMQService.sendMessage("users", user.user);
       });
     } catch (error) {
       console.log(error);
@@ -50,27 +49,33 @@ export class AuthService {
 
   signAuthAndRefreshToken = (
     user: UserAccount
-  ): { token: string; refreshToken: string, user: UserAccount } => {
+  ): { token: string; refreshToken: string; user: UserAccount } => {
     return {
       token: this.jwtAuth.signJWTToken(user.id, user.accountType),
       refreshToken: this.jwtAuth.signJWTRefreshToken(user.id, user.accountType),
-      user: user
+      user: user,
     };
   };
-  verifyBearerToken = async (authorization: string): Promise<boolean> => {
-    let token = authorization.split(" ")[1]; // Remove `Bearer` from string
-    if (token === "null" || !token) {
+
+  verifyBearerToken = async (
+    authorization: string | string[],
+    refresh: string | string[]
+  ): Promise<boolean> => {
+    if (!authorization || !refresh) {
       return false;
     }
-    if (!(await this.jwtAuth.verifyJWTToken(token))) {
+    if (authorization === "null" || !authorization) {
       return false;
+    }
+    if (!(await this.jwtAuth.verifyJWTToken(authorization))) {
+      if (!(await this.jwtAuth.verifyRefreshToken(refresh))) {
+        return false;
+      }
     }
     return true;
   };
 
-  encryptPassword = async (
-    inputPassword: string
-  ): Promise<IPasswordHash> => {
+  encryptPassword = async (inputPassword: string): Promise<IPasswordHash> => {
     try {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(inputPassword, salt);
@@ -97,9 +102,8 @@ export class AuthService {
     email: string,
     password: string,
     department: string,
-    accountType: AccountType,
-    external?: boolean
-  ): Promise<{ token: string; refreshToken: string, user: UserAccount }> => {
+    accountType: AccountType
+  ): Promise<{ token: string; refreshToken: string; user: UserAccount }> => {
     try {
       const encryptedPassword = await this.encryptPassword(password);
       const newUser = new UserAccount(
