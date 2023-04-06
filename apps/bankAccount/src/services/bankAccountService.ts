@@ -74,13 +74,13 @@ export class BankAccountService {
     try {
       const sender = this.getBankAccount(IBANfrom);
       const moneyToSend = new Money(amount, sender.balance.currency);
-      const reciever = this.getBankAccount(IBANto);
-      if (!sender || !reciever) {
+      const receiver = this.getBankAccount(IBANto);
+      if (!sender || !receiver) {
         return false;
       }
       return (
         (await sender.send(moneyToSend)) &&
-        (await reciever.recieve(moneyToSend))
+        (await receiver.receive(moneyToSend))
       );
     } catch (error) {
       console.log(error);

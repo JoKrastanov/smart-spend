@@ -62,7 +62,7 @@ export class BankAccount {
     }
   };
 
-  recieve = async (money: Money): Promise<boolean> => {
+  receive = async (money: Money): Promise<boolean> => {
     try {
       if (!this.checkCurrency(money.currency)) {
         const convertedMoney = await getConvertedValue(
