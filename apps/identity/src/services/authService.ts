@@ -1,6 +1,6 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import { JWTAuthentication } from "authentication-validation/lib";
 
 import { UserAccount } from "../models/userAccount";
 import { AccountType } from "../types/accountTypes";
@@ -13,10 +13,12 @@ dotenv.config();
 
 export class AuthService {
   private users: UserAccount[];
+  private jwtAuth;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
     this.users = [];
+    this.jwtAuth = JWTAuthentication();
     this.rabbitMQService = new RabbitMQService();
     this.init();
   }
@@ -36,12 +38,48 @@ export class AuthService {
           message.email,
           message.password,
           message.department,
-          message.accountType
+          message.accountType,
+          true
         );
         this.rabbitMQService.sendMessage("users", user);
       });
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  signAuthAndRefreshToken = (
+    user: UserAccount
+  ): { token: string; refreshToken: string, user: UserAccount } => {
+    return {
+      token: this.jwtAuth.signJWTToken(user.id, user.accountType),
+      refreshToken: this.jwtAuth.signJWTRefreshToken(user.id, user.accountType),
+      user: user
+    };
+  };
+  verifyBearerToken = async (authorization: string): Promise<boolean> => {
+    let token = authorization.split(" ")[1]; // Remove `Bearer` from string
+    if (token === "null" || !token) {
+      return false;
+    }
+    if (!(await this.jwtAuth.verifyJWTToken(token))) {
+      return false;
+    }
+    return true;
+  };
+
+  encryptPassword = async (
+    inputPassword: string
+  ): Promise<IPasswordHash> => {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(inputPassword, salt);
+      return {
+        hash,
+        salt,
+      };
+    } catch (error) {
+      throw new Error(error);
     }
   };
 
@@ -59,13 +97,11 @@ export class AuthService {
     email: string,
     password: string,
     department: string,
-    accountType: AccountType
-  ): Promise<UserAccount> => {
+    accountType: AccountType,
+    external?: boolean
+  ): Promise<{ token: string; refreshToken: string, user: UserAccount }> => {
     try {
       const encryptedPassword = await this.encryptPassword(password);
-      if (encryptedPassword instanceof Error) {
-        throw encryptedPassword;
-      }
       const newUser = new UserAccount(
         generateUUID(),
         firstName,
@@ -81,32 +117,27 @@ export class AuthService {
         accountType
       );
       this.users.push(newUser);
-      return newUser;
+      return this.signAuthAndRefreshToken(newUser);
     } catch (error) {
       return null;
     }
   };
 
-  loginCheck = async (inputPassword: string, userPassword: string) => {
-    try {
-      return await bcrypt.compare(inputPassword, userPassword);
-    } catch (error) {
-      return new Error(error);
-    }
-  };
-
-  encryptPassword = async (
+  loginCheck = async (
+    email: string,
     inputPassword: string
-  ): Promise<IPasswordHash | Error> => {
+  ): Promise<{ token: string; refreshToken: string }> => {
     try {
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(inputPassword, salt);
-      return {
-        hash,
-        salt,
-      };
+      const user = this.users.find((user) => user.email === email);
+      if (!user) return null;
+      const passwordCompare = await bcrypt.compare(
+        inputPassword,
+        user.password
+      );
+      if (!passwordCompare) return null;
+      return this.signAuthAndRefreshToken(user);
     } catch (error) {
-      return new Error(error);
+      throw new Error(error);
     }
   };
 }
