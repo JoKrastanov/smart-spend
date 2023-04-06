@@ -30,4 +30,15 @@ export type TransactionEvents =
           currency: string;
         };
       };
+    }
+  | {
+      type: "TransactionRefunded";
+      data: {
+        transactionId: string;
+        receiverIBAN: string;
+        amount: {
+          money: number;
+          currency: string;
+        };
+      };
     };
