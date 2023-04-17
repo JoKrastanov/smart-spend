@@ -10,7 +10,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install and Test AuthService Dependencies
+      - name: Install and Build AuthService Dependencies
         run: |
           cd ./apps/identity 
           npm install
@@ -18,7 +18,7 @@ jobs:
           npm install -g @google-cloud/functions-framework
           npm run build
           
-      - name: Install and Test BankAccountService Dependencies
+      - name: Install and Build BankAccountService Dependencies
         run: |
           cd ./apps/bankAccount 
           npm install
@@ -26,7 +26,7 @@ jobs:
           npm install -g @google-cloud/functions-framework
           npm run build
           
-      - name: Install and Test LicenseService Dependencies
+      - name: Install and Build LicenseService Dependencies
         run: |
           cd ./apps/license 
           npm install
@@ -40,7 +40,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install and Test AuthService Dependencies
+      - name: Install and Test AuthService
         run: |
           cd ./apps/identity 
           npm install
@@ -48,7 +48,7 @@ jobs:
           npm install -g @google-cloud/functions-framework
           npm run test
           
-      - name: Install and Test BankAccountService Dependencies
+      - name: Install and Test BankAccountService
         run: |
           cd ./apps/bankAccount 
           npm install
@@ -56,7 +56,7 @@ jobs:
           npm install -g @google-cloud/functions-framework
           npm run test
           
-      - name: Install and Test AuthService Dependencies
+      - name: Install and Test LicenseService
         run: |
           cd ./apps/license 
           npm install
