@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest  
     steps:
       - name: Checkout code
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
 
       - name: Install and Test AuthService Dependencies
         run: |
@@ -26,11 +26,10 @@ jobs:
           npm install -g @google-cloud/functions-framework
           npm run test
           
-      - name: Install and Test AuthService Dependencies
+      - name: Install and Test LicenseService Dependencies
         run: |
           cd ./apps/license 
           npm install
           npm install -g @nestjs/cli
           npm install -g @google-cloud/functions-framework
           npm run test
-
