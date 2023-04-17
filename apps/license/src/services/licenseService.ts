@@ -22,14 +22,16 @@ export class LicenseService {
     this.licenses = [];
     this.jwtAuth = JWTAuthentication();
     this.companyService = new CompanyService();
-    this.rabbitMQService = new RabbitMQService();
     this.companyService.registerCompany(
       "Company",
       Country.Bulgaria,
       "Botevgradsko shose 7",
       "123"
     );
-    this.init();
+    if (process.env.NODE_ENV !== "test") {
+      this.rabbitMQService = new RabbitMQService();
+      this.init();
+    }
   }
 
   private init = async () => {

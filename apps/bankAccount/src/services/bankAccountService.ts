@@ -16,8 +16,10 @@ export class BankAccountService {
   constructor() {
     this.bankAccounts = [];
     this.jwtAuth = JWTAuthentication();
-    this.rabbitMQService = new RabbitMQService();
-    this.init();
+    if (process.env.NODE_ENV !== "test") {
+      this.rabbitMQService = new RabbitMQService();
+      this.init();
+    }
   }
 
   private init = async () => {
@@ -36,11 +38,7 @@ export class BankAccountService {
         if (newBankAccount) {
           this.bankAccounts.push(newBankAccount);
         }
-        this.rabbitMQService.sendMessage("bank-accounts-response", {
-          message: newBankAccount ? "created" : null,
-        });
       });
-      await this.rabbitMQService.createQueue("bank-accounts-response");
     } catch (error) {
       console.log(error);
     }
@@ -98,14 +96,14 @@ export class BankAccountService {
   ): Promise<boolean> => {
     try {
       const sender = this.getBankAccount(IBANfrom);
-      const moneyToSend = new Money(amount, sender.balance.currency);
+      const transactionMoney = new Money(amount, sender.balance.currency);
       const receiver = this.getBankAccount(IBANto);
       if (!sender || !receiver) {
         return false;
       }
       return (
-        (await sender.send(moneyToSend)) &&
-        (await receiver.receive(moneyToSend))
+        (await sender.send(transactionMoney)) &&
+        (await receiver.receive(transactionMoney))
       );
     } catch (error) {
       console.log(error);

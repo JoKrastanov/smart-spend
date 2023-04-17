@@ -19,8 +19,10 @@ export class AuthService {
   constructor() {
     this.users = [];
     this.jwtAuth = JWTAuthentication();
-    this.rabbitMQService = new RabbitMQService();
-    this.init();
+    if (process.env.NODE_ENV !== "test") {
+      this.rabbitMQService = new RabbitMQService();
+      this.init();
+    }
   }
 
   private init = async () => {
