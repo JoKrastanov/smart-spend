@@ -73,7 +73,7 @@ jobs:
 
       - name: Install zap-cli
         run: |
-          wget https://github.com/zaproxy/zaproxy/releases/download/v2.10.0/ZAP_2.10.0_Core.tar.gz
+          wget https://github.com/zaproxy/zaproxy/releases/download/w2023-04-17/ZAP_WEEKLY_D-2023-04-17.zip
           tar -xvf ZAP_2.10.0_Core.tar.gz
           export PATH=$PWD/ZAP_2.10.0_Core:$PATH
           
