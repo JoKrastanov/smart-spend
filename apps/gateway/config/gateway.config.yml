@@ -1,0 +1,62 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  identity:
+    host: localhost
+    port: 4000
+    paths:
+      - /api/**
+  bankAccount:
+    host: localhost
+    port: 6000
+    paths:
+      - /api/**
+  license:
+    host: localhost
+    port: 5000
+    paths:
+      - /api/**
+serviceEndpoints:
+  identity:
+    url: http://localhost:4000/api
+  bankAccount:
+    url: http://localhost:6000/api
+  license:
+    url: http://localhost:5000/api
+policies:
+  - cors
+  - oauth2
+  - jwt
+  - proxy
+  - log
+pipelines:
+  identity_pipeline:
+    apiEndpoints:
+      - auth
+    policies:
+      - cors: {}
+      - proxy:
+          - action:
+              serviceEndpoint: identity
+              changeOrigin: true
+  bankAccount_pipeline:
+    apiEndpoints:
+      - bank
+    policies:
+      - cors: {}
+      - proxy:
+          - action:
+              serviceEndpoint: bankAccount
+              changeOrigin: true
+  license_pipeline:
+    apiEndpoints:
+      - license
+    policies:
+      - cors: {}
+      - proxy:
+          - action:
+              serviceEndpoint: license
+              changeOrigin: true

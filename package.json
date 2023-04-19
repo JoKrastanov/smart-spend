@@ -1,0 +1,25 @@
+{
+  "name": "smart-spend",
+  "version": "1.0.0",
+  "description": "To run any specific container navigate to the desired service using <br />\r `cd ./apps/:service-folder-name` and run: <br />\r `docker build -t :container-name .` <br />\r  after the container has been built run: <br />\r `docker run -p port:port :container-name` <br />\r for rabbit mq run: <br />\r `docker run --rm -it --hostname my-rabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management` <br />\r This will run an instance of Rabbit MQ. The management UI can be accessed using the port 15672 <br />\r We use the amqplib library on port 5672 to communicate with the server itself",
+  "main": ".eslintrc.js",
+  "dependencies": {
+    "amqplib-mocks": "^1.3.0",
+    "express-gateway": "^1.16.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoKrastanov/smart-spend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JoKrastanov/smart-spend/issues"
+  },
+  "homepage": "https://github.com/JoKrastanov/smart-spend#readme"
+}
