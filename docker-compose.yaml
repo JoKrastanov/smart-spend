@@ -1,21 +1,5 @@
 version: "3"
 services:
-    api-gateway:
-        image: expressgateway/express-gateway
-        ports:
-          - 8080:8080
-          - 9876:9876
-        environment:
-          - NODE_ENV=production
-          - EG_CONFIG_DIR=/var/lib/eg
-          - EG_LISTEN_PORT=8080
-          - EG_ADMIN_LISTEN_PORT=9876
-        volumes:
-          - ./config:/var/lib/eg
-        depends_on:
-          - identity-service
-          - bankaccount-service
-          - license-service
     rabbitmq:
         image: rabbitmq:3.11-management
         hostname: rabbitmq
@@ -61,23 +45,27 @@ services:
         env_file:
             - ./apps/bankAccount/.env
         build:
-            context: ./apps/bankaccount
+            context: ./apps/bankAccount
         ports:
             - "6000:6000"
         networks:
             - mynetwork
-    bankaccount-service_2:
-        depends_on:
-            rabbitmq:
-                condition: service_healthy
-        env_file:
-            - ./apps/bankAccount/.env
-        build:
-            context: ./apps/bankaccount
-        ports:
-            - "6001:6000"
-        networks:
-            - mynetwork
+    # api-gateway:
+    #     image: expressgateway/express-gateway
+    #     ports:
+    #       - 8080:8080
+    #       - 9876:9876
+    #     environment:
+    #       - NODE_ENV=production
+    #       - EG_CONFIG_DIR=/var/lib/eg
+    #       - EG_LISTEN_PORT=8080
+    #       - EG_ADMIN_LISTEN_PORT=9876
+    #     volumes:
+    #       - ./config:/var/lib/eg
+    #     depends_on:
+    #       - identity-service
+    #       - bankaccount-service
+    #       - license-service
 networks:
     mynetwork:
         driver: bridge

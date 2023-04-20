@@ -2,9 +2,9 @@
   "name": "bank-account",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.js",
+  "main": "dist/src/app.js",
   "scripts": {
-    "start": "tsc && node dist/app.js",
+    "start": "tsc && node dist/src/app.js",
     "dev": "nodemon src/app.ts",
     "build": "tsc",
     "test": "jest --detectOpenHandles"

@@ -7,3 +7,4 @@ docker-compose.yml
 .dockerignore
 README.MD
 LICENSE
+tests
