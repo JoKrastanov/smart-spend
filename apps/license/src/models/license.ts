@@ -1,4 +1,3 @@
-import { InvalidLicensePropertiesError } from "../errors/InvalidLicensePropertiesError";
 import { generateLicenseID } from "../helpers/generateLicenseID";
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { CurrencyCode } from "../types/currencies";
@@ -24,9 +23,14 @@ export class License {
     datePurchased: number,
     licenseType: LicenseTypes,
     requestedEmployeeNumber?: number,
-    requestedBankAccountNumber?: number
+    requestedBankAccountNumber?: number,
+    id?: string
   ) {
-    this.id = generateLicenseID();
+    if (!id) {
+      this.id = generateLicenseID();
+    } else {
+      this.id = id;
+    }
     this.companyId = companyId;
     this.datePurchased = datePurchased;
     this.licenseType = licenseType;
@@ -113,14 +117,14 @@ export class License {
   };
 
   registerBankAccount = () => {
-    if(!this.canAddBankAccount()) return false;
+    if (!this.canAddBankAccount()) return false;
     this.registeredBankAccounts++;
     return true;
-  }
+  };
 
   registerEmployee = () => {
-    if(!this.canRegisterEmployee()) return false;
+    if (!this.canRegisterEmployee()) return false;
     this.registeredEmployees++;
     return true;
-  }
+  };
 }

@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
 
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
@@ -9,26 +10,23 @@ import { CurrencyCode } from "../types/currencies";
 import { LicenseTypes } from "../types/licenseTypes";
 import { CompanyService } from "./companyService";
 import { RabbitMQService } from "./RabbitMQService";
+import { LicenseRepository } from "../repositories/licenseRepository";
 
 dotenv.config();
 
 export class LicenseService {
+  private licenseRepository: LicenseRepository;
   private companyService: CompanyService;
-  private licenses: License[];
   private jwtAuth;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
-    this.licenses = [];
     this.jwtAuth = JWTAuthentication();
     this.companyService = new CompanyService();
-    this.companyService.registerCompany(
-      "Company",
-      Country.Bulgaria,
-      "Botevgradsko shose 7",
-      "123"
-    );
-    if (process.env.NODE_ENV !== "test") {
+    if (
+      config.server.environment !== "test" &&
+      config.server.environment !== "development"
+    ) {
       this.rabbitMQService = new RabbitMQService();
       this.init();
     }
@@ -48,6 +46,9 @@ export class LicenseService {
     authorization: string | string[],
     refresh: string | string[]
   ): Promise<boolean> => {
+    if (config.server.environment === "development") {
+      return true;
+    }
     if (!authorization || !refresh) {
       return false;
     }
@@ -62,12 +63,12 @@ export class LicenseService {
     return true;
   };
 
-  getAllLicenses = () => {
-    return this.licenses;
+  getAllLicenses = async () => {
+    return this.licenseRepository.getAll();
   };
 
-  getLicenseByCompany = (companyId: string) => {
-    return this.licenses.find((license) => license.companyId === companyId);
+  getLicenseByCompany = async (companyId: string) => {
+    return await this.licenseRepository.getById(companyId);
   };
 
   issueLicense = (
@@ -83,7 +84,7 @@ export class LicenseService {
       licenseType === LicenseTypes.Pro
     ) {
       const license = new License(companyId, getCurrentUtcTime(), licenseType);
-      this.licenses.push(license);
+      this.licenseRepository.add(license);
       return license;
     }
     if (!requestedEmployeeNumber || !requestedBankAccountNumber) return;
@@ -93,14 +94,18 @@ export class LicenseService {
       licenseType,
       requestedEmployeeNumber
     );
-    this.licenses.push(license);
+    this.licenseRepository.add(license);
     return license;
   };
 
-  activateLicense = (companyId) => {
-    const license = this.getLicenseByCompany(companyId);
-    license.activateLicense();
-    return license;
+  activateLicense = async (companyId) => {
+    try {
+      const license = await this.getLicenseByCompany(companyId);
+      license.activateLicense();
+      return license;
+    } catch (error) {
+      throw error;
+    }
   };
 
   registerBankAccount = async (
@@ -112,7 +117,7 @@ export class LicenseService {
     currency: CurrencyCode
   ): Promise<String> => {
     try {
-      const license = this.getLicenseByCompany(companyId);
+      const license = await this.getLicenseByCompany(companyId);
       if (!license || !license.canAddBankAccount()) {
         return null;
       }
@@ -154,7 +159,7 @@ export class LicenseService {
     accountType: AccountType
   ) => {
     try {
-      const license = this.getLicenseByCompany(companyId);
+      const license = await this.getLicenseByCompany(companyId);
       if (!license || !license.canRegisterEmployee()) {
         return null;
       }
