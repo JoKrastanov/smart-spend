@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
-import config, { Config } from '../config';
+import config from '../config';
 
 import { authRoutes } from "./routes/authRoutes";
 

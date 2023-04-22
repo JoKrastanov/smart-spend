@@ -1,6 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { AccountType } from "../types/accountTypes";
+import { Country } from "../types/countries";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     firstName: {
         type: String,
         required: true
@@ -46,3 +48,7 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 })
+
+userSchema.index({ email: 1 })
+
+export const UserCollection = mongoose.model("Users", userSchema)

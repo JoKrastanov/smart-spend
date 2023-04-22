@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
 
 import { UserAccount } from "../models/userAccount";
@@ -8,18 +9,19 @@ import { IPasswordHash } from "../types/passwordHash";
 import { Country } from "../types/countries";
 import { RabbitMQService } from "./RabbitMQService";
 import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
+import { AuthRepository } from "../repositories/authRepository";
 
 dotenv.config();
 
 export class AuthService {
-  private users: UserAccount[];
   private jwtAuth;
+  private authRepository: AuthRepository;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
-    this.users = [];
     this.jwtAuth = JWTAuthentication();
-    if (process.env.NODE_ENV !== "test") {
+    this.authRepository = new AuthRepository();
+    if (config.server.environment !== "test" && config.server.environment !== "development") {
       this.rabbitMQService = new RabbitMQService();
       this.init();
     }
@@ -63,6 +65,9 @@ export class AuthService {
     authorization: string | string[],
     refresh: string | string[]
   ): Promise<boolean> => {
+    if (config.server.environment === "development") {
+      return true;
+    }
     if (!authorization || !refresh) {
       return false;
     }
@@ -90,8 +95,12 @@ export class AuthService {
     }
   };
 
-  getUsers = (): UserAccount[] => {
-    return this.users;
+  getUsers = async (): Promise<UserAccount[]> => {
+    try {
+      return await this.authRepository.getAll();
+    } catch (error) {
+      return [];
+    }
   };
 
   addUser = async (
@@ -107,6 +116,10 @@ export class AuthService {
     accountType: AccountType
   ): Promise<{ token: string; refreshToken: string; user: UserAccount }> => {
     try {
+      const userExists = await this.authRepository.getByEmail(email);
+      if (userExists) {
+        throw new Error("This email is already in use");
+      }
       const encryptedPassword = await this.encryptPassword(password);
       const newUser = new UserAccount(
         generateUUID(),
@@ -122,10 +135,10 @@ export class AuthService {
         department,
         accountType
       );
-      this.users.push(newUser);
+      this.authRepository.add(newUser);
       return this.signAuthAndRefreshToken(newUser);
     } catch (error) {
-      return null;
+      throw error;
     }
   };
 
@@ -134,7 +147,7 @@ export class AuthService {
     inputPassword: string
   ): Promise<{ token: string; refreshToken: string }> => {
     try {
-      const user = this.users.find((user) => user.email === email);
+      const user = await this.authRepository.getByEmail(email);
       if (!user) return null;
       const passwordCompare = await bcrypt.compare(
         inputPassword,

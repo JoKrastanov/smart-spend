@@ -63,7 +63,7 @@ export class AuthController {
       const { token, refresh } = req.headers;
       if (!token)
         return res.status(401).send("Access Denied / Unauthorized request");
-      if(!await this.service.verifyBearerToken(token, refresh)) {
+      if (!(await this.service.verifyBearerToken(token, refresh))) {
         return res.status(401).send("Unauthorized request");
       }
       res.status(200).send("Welcome");
