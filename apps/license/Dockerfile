@@ -13,6 +13,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Install TypeScript compiler
+RUN npm install -g typescript
+
 # Copy the rest of the application files to the container
 COPY . .
 

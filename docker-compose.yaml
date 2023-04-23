@@ -50,22 +50,22 @@ services:
             - "6000:6000"
         networks:
             - mynetwork
-    # api-gateway:
-    #     image: expressgateway/express-gateway
-    #     ports:
-    #       - 8080:8080
-    #       - 9876:9876
-    #     environment:
-    #       - NODE_ENV=production
-    #       - EG_CONFIG_DIR=/var/lib/eg
-    #       - EG_LISTEN_PORT=8080
-    #       - EG_ADMIN_LISTEN_PORT=9876
-    #     volumes:
-    #       - ./config:/var/lib/eg
-    #     depends_on:
-    #       - identity-service
-    #       - bankaccount-service
-    #       - license-service
+    api-gateway:
+        image: expressgateway/express-gateway
+        ports:
+          - 8080:8080
+          - 9876:9876
+        environment:
+          - NODE_ENV=production
+          - EG_CONFIG_DIR=/var/lib/eg
+          - EG_LISTEN_PORT=8080
+          - EG_ADMIN_LISTEN_PORT=9876
+        volumes:
+          - ./apps/gateway/config:/var/lib/eg
+        depends_on:
+          - identity-service
+          - bankaccount-service
+          - license-service
 networks:
     mynetwork:
         driver: bridge

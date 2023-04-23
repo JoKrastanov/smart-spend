@@ -10,7 +10,7 @@ describe("AuthService", () => {
 
   describe("addLicense", () => {
     test("should add a license", async () => {
-      const result = licenseService.issueLicense("123", LicenseTypes.Pro);
+      const result = await licenseService.issueLicense("123", LicenseTypes.Pro);
 
       expect(result).toBeDefined();
       expect(result.companyId).toBe("123");

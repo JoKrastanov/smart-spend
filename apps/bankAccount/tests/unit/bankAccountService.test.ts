@@ -10,20 +10,20 @@ describe("BankAccountService", () => {
   });
 
   describe("addBankAccount", () => {
-    test("should add a bank account", () => {
-      const result = bankAccountService.addBankAccount(
+    test("should add a bank account", async () => {
+      const result = await bankAccountService.addBankAccount(
         "123",
         "Test Bank Account",
         "IT",
         "TESTIBAN123",
-        new Money(1000, CurrencyCode.EUR)
+        new Money(1000, CurrencyCode.EUR, true)
       );
 
       expect(result).toBeDefined();
       expect(result.companyId).toBe("123");
       expect(result.IBAN).toBe("TESTIBAN123");
       expect(JSON.stringify(result.balance)).toBe(
-        JSON.stringify(new Money(1000, CurrencyCode.EUR))
+        JSON.stringify(new Money(1000, CurrencyCode.EUR, true))
       );
       expect(result.department).toBe("IT");
     });
