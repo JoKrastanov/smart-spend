@@ -1,26 +1,30 @@
 import dotenv from "dotenv";
+import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
 
 import { generateUUID } from "../helpers/generateUUID";
 import { Company } from "../models/company";
 import { Country } from "../types/countries";
+import { CompanyRepository } from "../repositories/companyRepository";
 
 dotenv.config();
 
 export class CompanyService {
-  private companies: Company[];
   private jwtAuth;
+  private comapnyRepository: CompanyRepository;
 
   constructor() {
-    this.companies = [];
     this.jwtAuth = JWTAuthentication();
-    this.registerCompany("Test Company", Country.Bulgaria, "Address", "123");
+    this.comapnyRepository = new CompanyRepository();
   }
 
   verifyBearerToken = async (
     authorization: string | string[],
     refresh: string | string[]
   ): Promise<boolean> => {
+    if (config.server.environment === "development") {
+      return true;
+    }
     if (!authorization || !refresh) {
       return false;
     }
@@ -35,27 +39,31 @@ export class CompanyService {
     return true;
   };
 
-  registerCompany = (
+  registerCompany = async (
     name: string,
     country: Country,
     address: string,
     id?: string
-  ): Company | null => {
-    const newCompany = new Company(
-      id ? id : generateUUID(),
-      name,
-      country,
-      address
-    );
-    this.companies.push(newCompany);
-    return newCompany;
+  ): Promise<Company | null> => {
+    try {
+      let newCompany = new Company(
+        id ? id : generateUUID(),
+        name,
+        country,
+        address
+      );
+      newCompany = await this.comapnyRepository.add(newCompany);
+      return newCompany;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  getCompanies = () => {
-    return this.companies;
+  getCompanies = async () => {
+    return await this.comapnyRepository.getAll();
   };
 
-  getCompany = (id: string) => {
-    return this.companies.find((company) => company.id === id);
+  getCompany = async (id: string) => {
+    return await this.comapnyRepository.getById(id);
   };
 }

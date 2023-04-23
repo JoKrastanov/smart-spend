@@ -25,7 +25,8 @@ const licenseSchema = new Schema({
   },
   lastPayment: {
     type: Number,
-    required: true,
+    required: false,
+    default: null
   },
   maxEmployeeNumber: {
     type: Number,
@@ -65,4 +66,4 @@ const licenseSchema = new Schema({
 
 licenseSchema.index({ companyId: 1 });
 
-export const LicenseCollection = mongoose.model("Liceses", licenseSchema);
+export const LicenseCollection = mongoose.model("Licenses", licenseSchema);

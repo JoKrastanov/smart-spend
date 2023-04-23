@@ -1,5 +1,8 @@
 import { License } from "../models/license";
+import { Money } from "../models/money";
 import { LicenseCollection } from "../schemas/licenseSchema";
+import { CurrencyCode } from "../types/currencies";
+import { LicenseTypes } from "../types/licenseTypes";
 
 export class LicenseRepository {
   private repository = LicenseCollection;
@@ -16,13 +19,32 @@ export class LicenseRepository {
 
   getById = async (id: String) => {
     try {
-      return (await this.repository.findOne({ companyId: id })) as License;
+      const fetchedLicense = await this.repository.findOne({ companyId: id });
+      return new License(
+        fetchedLicense.id,
+        fetchedLicense.companyId,
+        fetchedLicense.datePurchased,
+        LicenseTypes[fetchedLicense.licenseType],
+        false,
+        0,
+        0,
+        fetchedLicense.lastPayment,
+        fetchedLicense.maxEmployeeNumber,
+        fetchedLicense.registeredEmployees,
+        new Money(
+          fetchedLicense.pricePerEmployee.amount,
+          CurrencyCode[fetchedLicense.pricePerEmployee.currency]
+        ),
+        fetchedLicense.maxBankAccountsNumber,
+        fetchedLicense.registeredBankAccounts,
+        fetchedLicense.active
+      );
     } catch (error) {
       throw error;
     }
   };
 
-  add = async (license: License) => {
+  add = async (license: License): Promise<License> => {
     try {
       const newLicense = new this.repository({
         id: license.id,
@@ -38,8 +60,38 @@ export class LicenseRepository {
         licenseType: license.licenseType,
         active: license.active,
       });
-      newLicense.save();
+      await newLicense.save();
       return license;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  update = async (license: License): Promise<License> => {
+    try {
+      const updateProperties = {
+        basePrice: license.basePrice,
+        datePurchased: license.datePurchased,
+        lastPayment: license.lastPayment,
+        maxEmployeeNumber: license.maxEmployeeNumber,
+        registeredEmployees: license.registeredEmployees,
+        pricePerEmployee: license.pricePerEmployee,
+        maxBankAccountsNumber: license.maxBankAccountsNumber,
+        registeredBankAccounts: license.registeredBankAccounts,
+        licenseType: license.licenseType,
+        active: license.active,
+      };
+      let licenseToUpdate = (await this.repository.findOneAndUpdate(
+        {
+          companyId: license.companyId,
+        },
+        updateProperties,
+        { new: true }
+      )) as License;
+      if (!licenseToUpdate) {
+        return null;
+      }
+      return licenseToUpdate;
     } catch (error) {
       throw error;
     }

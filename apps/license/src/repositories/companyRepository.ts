@@ -1,31 +1,46 @@
 import { Company } from "../models/company";
 import { CompanyCollection } from "../schemas/companySchema";
+import { Country } from "../types/countries";
 
-export class AuthRepository {
+export class CompanyRepository {
   private repository = CompanyCollection;
 
   constructor() {}
 
   getAll = async () => {
     try {
-      return await this.repository.find() as Company[];
+      return (await this.repository.find()) as Company[];
     } catch (error) {
       throw error;
     }
   };
 
-  getByEmail = async (email: String) => {
+  getById = async (id: String) => {
     try {
-        return await this.repository.findOne({email : email}) as Company;
-      } catch (error) {
-        throw error;
-      }
-  }
+      const fetchedCompany = (await this.repository.findOne({
+        id: id,
+      })) as Company;
+      return new Company(
+        fetchedCompany.id,
+        fetchedCompany.name,
+        Country[fetchedCompany.country],
+        fetchedCompany.address
+      );
+    } catch (error) {
+      throw error;
+    }
+  };
 
-  add = async (user: Company) => {
+  add = async (company: Company) => {
     try {
-      
-      return user;
+      const newCompany = new this.repository({
+        id: company.id,
+        name: company.name,
+        country: company.country,
+        address: company.address,
+      });
+      newCompany.save();
+      return company;
     } catch (error) {
       throw error;
     }

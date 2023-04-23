@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
 
+
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { License } from "../models/license";
 import { AccountType } from "../types/accountTypes";
@@ -11,6 +12,7 @@ import { LicenseTypes } from "../types/licenseTypes";
 import { CompanyService } from "./companyService";
 import { RabbitMQService } from "./RabbitMQService";
 import { LicenseRepository } from "../repositories/licenseRepository";
+import { generateLicenseID } from "../helpers/generateLicenseID";
 
 dotenv.config();
 
@@ -22,6 +24,7 @@ export class LicenseService {
 
   constructor() {
     this.jwtAuth = JWTAuthentication();
+    this.licenseRepository = new LicenseRepository();
     this.companyService = new CompanyService();
     if (
       config.server.environment !== "test" &&
@@ -63,45 +66,71 @@ export class LicenseService {
     return true;
   };
 
-  getAllLicenses = async () => {
-    return this.licenseRepository.getAll();
+  getAllLicenses = async (): Promise<License[]> => {
+    return await this.licenseRepository.getAll();
   };
 
-  getLicenseByCompany = async (companyId: string) => {
-    return await this.licenseRepository.getById(companyId);
+  getLicenseByCompany = async (companyId: string): Promise<License> => {
+    try {
+      return await this.licenseRepository.getById(companyId);
+    } catch (error) {
+      throw error;
+    }
   };
 
-  issueLicense = (
+  issueLicense = async (
     companyId: string,
     licenseType: LicenseTypes,
     requestedEmployeeNumber?: number,
     requestedBankAccountNumber?: number
-  ) => {
-    const company = this.companyService.getCompany(companyId);
-    if (!company) return null;
-    if (
-      licenseType === LicenseTypes.Basic ||
-      licenseType === LicenseTypes.Pro
-    ) {
-      const license = new License(companyId, getCurrentUtcTime(), licenseType);
-      this.licenseRepository.add(license);
+  ): Promise<License> => {
+    try {
+      const company = await this.companyService.getCompany(companyId);
+      const existingLicense = await this.licenseRepository.getById(companyId);
+      if (!company || existingLicense) {
+        return null;
+      }
+      if (
+        licenseType === LicenseTypes.Basic ||
+        licenseType === LicenseTypes.Pro
+      ) {
+        let license = new License(
+          generateLicenseID(),
+          companyId,
+          getCurrentUtcTime(),
+          licenseType,
+          true
+        );
+        license = await this.licenseRepository.add(license);
+        return license;
+      }
+      if (!requestedEmployeeNumber || !requestedBankAccountNumber) {
+        return;
+      }
+      let license = new License(
+        generateLicenseID(),
+        companyId,
+        getCurrentUtcTime(),
+        licenseType,
+        true,
+        requestedEmployeeNumber,
+        requestedBankAccountNumber
+      );
+      license = await this.licenseRepository.add(license);
       return license;
+    } catch (error) {
+      throw error;
     }
-    if (!requestedEmployeeNumber || !requestedBankAccountNumber) return;
-    const license = new License(
-      companyId,
-      getCurrentUtcTime(),
-      licenseType,
-      requestedEmployeeNumber
-    );
-    this.licenseRepository.add(license);
-    return license;
   };
 
-  activateLicense = async (companyId) => {
+  activateLicense = async (companyId): Promise<License> => {
     try {
-      const license = await this.getLicenseByCompany(companyId);
+      let license = await this.getLicenseByCompany(companyId);
+      if (!license) {
+        return null;
+      }
       license.activateLicense();
+      license = await this.licenseRepository.update(license);
       return license;
     } catch (error) {
       throw error;

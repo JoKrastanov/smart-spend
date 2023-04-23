@@ -20,7 +20,22 @@ export class LicenseController {
     ) {
       return res.status(401).send("Unauthorized request");
     }
-    res.status(200).json(this.service.getAllLicenses());
+    res.status(200).json(await this.service.getAllLicenses());
+  };
+
+  getByCompany = async (req: Request, res: Response) => {
+    const { token, refresh } = req.headers;
+    if (
+      !(await this.service.verifyBearerToken(
+        token as string,
+        refresh as string
+      ))
+    ) {
+      return res.status(401).send("Unauthorized request");
+    }
+    res
+      .status(200)
+      .json(await this.service.getLicenseByCompany(req.params.companyId));
   };
 
   subscribe = async (req: Request, res: Response) => {
@@ -46,14 +61,14 @@ export class LicenseController {
         requestedEmployeeNumber &&
         requestedBankAccountNumber
       ) {
-        newLicense = this.service.issueLicense(
+        newLicense = await this.service.issueLicense(
           companyId,
           licenseType,
           requestedEmployeeNumber,
           requestedBankAccountNumber
         );
       } else {
-        newLicense = this.service.issueLicense(companyId, licenseType);
+        newLicense = await this.service.issueLicense(companyId, licenseType);
       }
       if (!newLicense) {
         res
@@ -79,7 +94,7 @@ export class LicenseController {
         return res.status(401).send("Unauthorized request");
       }
       const { companyId } = req.params;
-      const license = this.service.activateLicense(companyId);
+      const license = await this.service.activateLicense(companyId);
       if (!license) {
         res.sendStatus(404);
       }

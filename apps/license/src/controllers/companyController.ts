@@ -19,7 +19,7 @@ export class CompanyController {
     ) {
       return res.status(401).send("Unauthorized request");
     }
-    res.status(200).send(this.service.getCompanies());
+    res.status(200).send(await this.service.getCompanies());
   };
 
   getCompany = async (req: Request, res: Response) => {
@@ -33,7 +33,7 @@ export class CompanyController {
       return res.status(401).send("Unauthorized request");
     }
     const { id } = req.params;
-    const company = this.service.getCompany(id);
+    const company = await this.service.getCompany(id);
     if (!company) {
       res
         .status(404)
@@ -55,7 +55,7 @@ export class CompanyController {
         return res.status(401).send("Unauthorized request");
       }
       const { name, country, address } = req.body;
-      const newCompany = this.service.registerCompany(name, country, address);
+      const newCompany = await this.service.registerCompany(name, country, address);
       if (!newCompany) {
         res
           .status(404)

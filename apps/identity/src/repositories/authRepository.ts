@@ -1,5 +1,7 @@
 import { UserAccount } from "../models/userAccount";
 import { UserCollection } from "../schemas/profileSchema";
+import { AccountType } from "../types/accountTypes";
+import { Country } from "../types/countries";
 
 export class AuthRepository {
   private repository = UserCollection;
@@ -16,7 +18,20 @@ export class AuthRepository {
 
   getByEmail = async (email: String) => {
     try {
-        return await this.repository.findOne({email : email}) as UserAccount;
+        const fetchedUser = await this.repository.findOne({email : email});
+        return new UserAccount(
+          fetchedUser.id,
+          fetchedUser.firstName,
+          fetchedUser.lastName,
+          fetchedUser.address,
+          fetchedUser.phoneNumber,
+          Country[fetchedUser.country],
+          fetchedUser.companyId,
+          fetchedUser.email,
+          fetchedUser.password,
+          fetchedUser.salt,
+          fetchedUser.department,
+          AccountType[fetchedUser.accountType])
       } catch (error) {
         throw error;
       }

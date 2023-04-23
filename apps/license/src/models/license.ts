@@ -1,4 +1,3 @@
-import { generateLicenseID } from "../helpers/generateLicenseID";
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { CurrencyCode } from "../types/currencies";
 import { LicenseTypes } from "../types/licenseTypes";
@@ -19,29 +18,43 @@ export class License {
   active: boolean;
 
   constructor(
+    id: string,
     companyId: string,
     datePurchased: number,
     licenseType: LicenseTypes,
+    licenseIsNew: boolean,
     requestedEmployeeNumber?: number,
     requestedBankAccountNumber?: number,
-    id?: string
+    lastPayment?: number,
+    maxEmployeeNumber?: number,
+    registeredEmployees?: number,
+    pricePerEmployee?: Money,
+    maxBankAccountsNumber?: number,
+    registeredBankAccounts?: number,
+    active?: boolean
   ) {
-    if (!id) {
-      this.id = generateLicenseID();
-    } else {
-      this.id = id;
-    }
+    this.id = id;
     this.companyId = companyId;
     this.datePurchased = datePurchased;
     this.licenseType = licenseType;
-    this.registeredBankAccounts = 0;
-    this.registeredEmployees = 0;
-    this.active = false;
-    this.generateDefaultLicenseProperties(
-      licenseType,
-      requestedEmployeeNumber,
-      requestedBankAccountNumber
-    );
+    if (licenseIsNew) {
+      this.registeredBankAccounts = 0;
+      this.registeredEmployees = 0;
+      this.active = false;
+      this.generateDefaultLicenseProperties(
+        licenseType,
+        requestedEmployeeNumber,
+        requestedBankAccountNumber
+      );
+    } else {
+      this.lastPayment = lastPayment;
+      this.maxEmployeeNumber = maxEmployeeNumber;
+      this.registeredEmployees = registeredEmployees;
+      this.pricePerEmployee = pricePerEmployee;
+      this.maxBankAccountsNumber = maxBankAccountsNumber;
+      this.registeredBankAccounts = registeredBankAccounts;
+      this.active = active;
+    }
   }
 
   activateLicense = () => {
