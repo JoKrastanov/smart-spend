@@ -15,7 +15,8 @@ jobs:
           cd ./apps/identity 
           npm install
           npm install -g @nestjs/cli
-          npm install -g @google-cloud/functions-framework
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run build
           
       - name: Install and Build BankAccountService Dependencies
@@ -23,7 +24,8 @@ jobs:
           cd ./apps/bankAccount 
           npm install
           npm install -g @nestjs/cli
-          npm install -g @google-cloud/functions-framework
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run build
           
       - name: Install and Build LicenseService Dependencies
@@ -31,7 +33,8 @@ jobs:
           cd ./apps/license 
           npm install
           npm install -g @nestjs/cli
-          npm install -g @google-cloud/functions-framework
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run build
   test:
     runs-on: ubuntu-latest
@@ -45,7 +48,8 @@ jobs:
           cd ./apps/identity 
           npm install
           npm install -g @nestjs/cli
-          npm install -g @google-cloud/functions-framework
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run test
           
       - name: Install and Test BankAccountService
@@ -53,7 +57,8 @@ jobs:
           cd ./apps/bankAccount 
           npm install
           npm install -g @nestjs/cli
-          npm install -g @google-cloud/functions-framework
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run test
           
       - name: Install and Test LicenseService
@@ -61,5 +66,6 @@ jobs:
           cd ./apps/license 
           npm install
           npm install -g @nestjs/cli
-          npm install -g @google-cloud/functions-framework
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run test
