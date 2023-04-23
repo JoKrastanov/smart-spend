@@ -14,21 +14,27 @@ jobs:
         run: |
           cd ./apps/identity 
           npm install
-          npm install -g @nestjs/cli typescript @google-cloud/functions-framework
+          npm install -g @nestjs/cli
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run build
           
       - name: Install and Build BankAccountService Dependencies
         run: |
           cd ./apps/bankAccount 
           npm install
-          npm install -g @nestjs/cli typescript @google-cloud/functions-framework
+          npm install -g @nestjs/cli
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run build
           
       - name: Install and Build LicenseService Dependencies
         run: |
           cd ./apps/license 
           npm install
-          npm install -g @nestjs/cli typescript @google-cloud/functions-framework
+          npm install -g @nestjs/cli
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run build
   test:
     runs-on: ubuntu-latest
@@ -41,19 +47,25 @@ jobs:
         run: |
           cd ./apps/identity 
           npm install
-          npm install -g @nestjs/cli typescript @google-cloud/functions-framework
+          npm install -g @nestjs/cli
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run test
           
       - name: Install and Test BankAccountService
         run: |
           cd ./apps/bankAccount 
           npm install
-          npm install -g @nestjs/cli typescript @google-cloud/functions-framework
+          npm install -g @nestjs/cli
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run test
           
       - name: Install and Test LicenseService
         run: |
           cd ./apps/license 
           npm install
-          npm install -g @nestjs/cli typescript @google-cloud/functions-framework
+          npm install -g @nestjs/cli
+          npm install typescript
+          npm install @google-cloud/functions-framework
           npm run test
