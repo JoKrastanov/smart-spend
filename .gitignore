@@ -11,6 +11,9 @@ yarn-error.log*
 # Dependencies directory
 node_modules/
 
+# Environment variables
+.env
+
 # Output of 'npm pack'
 *.tgz
 
