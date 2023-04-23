@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -8,7 +7,6 @@ import config from '../config';
 import { licenseRouter } from "./routes/licenseRoutes";
 import { companyRouter } from "./routes/companyRoutes";
 
-dotenv.config();
 const app: Express = express();
 
 // * CORS Policy

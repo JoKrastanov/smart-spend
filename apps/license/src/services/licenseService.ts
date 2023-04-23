@@ -1,7 +1,5 @@
-import dotenv from "dotenv";
 import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
-
 
 import { getCurrentUtcTime } from "../helpers/getCurrentUTCTime";
 import { License } from "../models/license";
@@ -13,8 +11,6 @@ import { CompanyService } from "./companyService";
 import { RabbitMQService } from "./RabbitMQService";
 import { LicenseRepository } from "../repositories/licenseRepository";
 import { generateLicenseID } from "../helpers/generateLicenseID";
-
-dotenv.config();
 
 export class LicenseService {
   private licenseRepository: LicenseRepository;
@@ -52,10 +48,7 @@ export class LicenseService {
     if (config.server.environment === "development") {
       return true;
     }
-    if (!authorization || !refresh) {
-      return false;
-    }
-    if (authorization === "null" || !authorization) {
+    if (!authorization || !refresh || authorization === "null") {
       return false;
     }
     if (!(await this.jwtAuth.verifyJWTToken(authorization))) {

@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -7,7 +6,6 @@ import config from '../config';
 
 import { authRoutes } from "./routes/authRoutes";
 
-dotenv.config();
 const app: Express = express();
 
 // * CORS Policy

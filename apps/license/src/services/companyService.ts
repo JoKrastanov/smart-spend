@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
 
@@ -6,8 +5,6 @@ import { generateUUID } from "../helpers/generateUUID";
 import { Company } from "../models/company";
 import { Country } from "../types/countries";
 import { CompanyRepository } from "../repositories/companyRepository";
-
-dotenv.config();
 
 export class CompanyService {
   private jwtAuth;
@@ -25,10 +22,7 @@ export class CompanyService {
     if (config.server.environment === "development") {
       return true;
     }
-    if (!authorization || !refresh) {
-      return false;
-    }
-    if (authorization === "null" || !authorization) {
+    if (!authorization || !refresh || authorization === "null") {
       return false;
     }
     if (!(await this.jwtAuth.verifyJWTToken(authorization))) {

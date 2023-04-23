@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import config from "../../config";
 import { JWTAuthentication } from "authentication-validation/lib";
@@ -10,8 +9,6 @@ import { Country } from "../types/countries";
 import { RabbitMQService } from "./RabbitMQService";
 import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { AuthRepository } from "../repositories/authRepository";
-
-dotenv.config();
 
 export class AuthService {
   private jwtAuth;
@@ -68,10 +65,7 @@ export class AuthService {
     if (config.server.environment === "development") {
       return true;
     }
-    if (!authorization || !refresh) {
-      return false;
-    }
-    if (authorization === "null" || !authorization) {
+    if (!authorization || !refresh || authorization === "null" ) {
       return false;
     }
     if (!(await this.jwtAuth.verifyJWTToken(authorization))) {

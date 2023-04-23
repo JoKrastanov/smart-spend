@@ -4,8 +4,8 @@ export class Money {
   amount: number;
   currency: CurrencyCode;
 
-  constructor(amount: number, currency: CurrencyCode) {
-    this.amount = amount * 100;
+  constructor(amount: number, currency: CurrencyCode, newMoney: boolean) {
+    this.amount = newMoney ? amount * 100 : amount;
     this.currency = currency;
   }
 

@@ -9,7 +9,7 @@ export class LicenseRepository {
 
   constructor() {}
 
-  getAll = async () => {
+  getAll = async (): Promise<License[]> => {
     try {
       return (await this.repository.find()) as License[];
     } catch (error) {
@@ -17,9 +17,12 @@ export class LicenseRepository {
     }
   };
 
-  getById = async (id: String) => {
+  getById = async (id: String): Promise<License> => {
     try {
       const fetchedLicense = await this.repository.findOne({ companyId: id });
+      if (!fetchedLicense) {
+        return null;
+      }
       return new License(
         fetchedLicense.id,
         fetchedLicense.companyId,
@@ -33,7 +36,8 @@ export class LicenseRepository {
         fetchedLicense.registeredEmployees,
         new Money(
           fetchedLicense.pricePerEmployee.amount,
-          CurrencyCode[fetchedLicense.pricePerEmployee.currency]
+          CurrencyCode[fetchedLicense.pricePerEmployee.currency],
+          false
         ),
         fetchedLicense.maxBankAccountsNumber,
         fetchedLicense.registeredBankAccounts,

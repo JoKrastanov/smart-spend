@@ -7,7 +7,7 @@ export class CompanyRepository {
 
   constructor() {}
 
-  getAll = async () => {
+  getAll = async (): Promise<Company[]> => {
     try {
       return (await this.repository.find()) as Company[];
     } catch (error) {
@@ -15,7 +15,7 @@ export class CompanyRepository {
     }
   };
 
-  getById = async (id: String) => {
+  getById = async (id: String): Promise<Company> => {
     try {
       const fetchedCompany = (await this.repository.findOne({
         id: id,
@@ -31,7 +31,7 @@ export class CompanyRepository {
     }
   };
 
-  add = async (company: Company) => {
+  add = async (company: Company): Promise<Company> => {
     try {
       const newCompany = new this.repository({
         id: company.id,
@@ -39,7 +39,7 @@ export class CompanyRepository {
         country: company.country,
         address: company.address,
       });
-      newCompany.save();
+      await newCompany.save();
       return company;
     } catch (error) {
       throw error;

@@ -8,7 +8,7 @@ export class AuthRepository {
 
   constructor() {}
 
-  getAll = async () => {
+  getAll = async (): Promise<UserAccount[]> => {
     try {
       return await this.repository.find() as UserAccount[];
     } catch (error) {
@@ -16,7 +16,7 @@ export class AuthRepository {
     }
   };
 
-  getByEmail = async (email: String) => {
+  getByEmail = async (email: String): Promise<UserAccount> => {
     try {
         const fetchedUser = await this.repository.findOne({email : email});
         return new UserAccount(
@@ -37,7 +37,7 @@ export class AuthRepository {
       }
   }
 
-  add = async (user: UserAccount) => {
+  add = async (user: UserAccount): Promise<UserAccount> => {
     try {
       const newUser = new this.repository({
         firstName: user.firstName,
@@ -52,7 +52,7 @@ export class AuthRepository {
         department: user.department,
         accountType: user.accountType,
       });
-      newUser.save();
+      await newUser.save();
       return user;
     } catch (error) {
       throw error;

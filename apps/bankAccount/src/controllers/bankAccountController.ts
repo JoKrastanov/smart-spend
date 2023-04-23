@@ -9,36 +9,44 @@ export class BankAccountController {
   }
 
   getByCompany = async (req: Request, res: Response) => {
-    const { token, refresh } = req.headers;
-    if (
-      !(await this.service.verifyBearerToken(
-        token as string,
-        refresh as string
-      ))
-    ) {
-      return res.status(401).send("Unauthorized request");
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const { IBAN } = req.params;
+      const company = await this.service.getBankAccount(IBAN);
+      if (!company) {
+        res.sendStatus(404);
+        return;
+      }
+      res.status(200).send(company);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    const { IBAN } = req.params;
-    const company = this.service.getBankAccount(IBAN);
-    if (!company) {
-      res.sendStatus(404);
-      return;
-    }
-    res.status(200).send(company);
   };
 
   getAllCompanies = async (req: Request, res: Response) => {
-    const { token, refresh } = req.headers;
-    if (
-      !(await this.service.verifyBearerToken(
-        token as string,
-        refresh as string
-      ))
-    ) {
-      return res.status(401).send("Unauthorized request");
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const companies = await this.service.getBankAccounts();
+      res.status(200).send(companies);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    const companies = this.service.getBankAccounts();
-    res.status(200).send(companies);
   };
 
   sendMoney = async (req: Request, res: Response) => {

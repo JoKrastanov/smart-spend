@@ -1,22 +1,24 @@
-import dotenv from "dotenv";
 import { JWTAuthentication } from "authentication-validation/lib";
 
 import { generateUUID } from "../helpers/generateUUID";
 import { BankAccount } from "../models/bankAccount";
 import { Money } from "../models/money";
 import { RabbitMQService } from "./RabbitMQService";
-
-dotenv.config();
+import config from "../../config";
+import { BankAccountRepository } from "../repositories/bankAccountRepository";
 
 export class BankAccountService {
-  private bankAccounts: BankAccount[];
+  private bankAccountRepository: BankAccountRepository;
   private jwtAuth;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
-    this.bankAccounts = [];
+    this.bankAccountRepository = new BankAccountRepository();
     this.jwtAuth = JWTAuthentication();
-    if (process.env.NODE_ENV !== "test") {
+    if (
+      config.server.environment !== "test" &&
+      config.server.environment !== "development"
+    ) {
       this.rabbitMQService = new RabbitMQService();
       this.init();
     }
@@ -27,17 +29,14 @@ export class BankAccountService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("bank-accounts");
       this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
-        const bankBalance = new Money(message.balance, message.currency);
-        const newBankAccount = this.addBankAccount(
+        const bankBalance = new Money(message.balance, message.currency, true);
+        await this.addBankAccount(
           message.companyId,
           message.name,
           message.department,
           message.IBAN,
           bankBalance
         );
-        if (newBankAccount) {
-          this.bankAccounts.push(newBankAccount);
-        }
       });
     } catch (error) {
       console.log(error);
@@ -48,10 +47,10 @@ export class BankAccountService {
     authorization: string | string[],
     refresh: string | string[]
   ): Promise<boolean> => {
-    if (!authorization || !refresh) {
-      return false;
+    if (config.server.environment === "development") {
+      return true;
     }
-    if (authorization === "null" || !authorization) {
+    if (!authorization || !refresh || authorization === "null") {
       return false;
     }
     if (!(await this.jwtAuth.verifyJWTToken(authorization))) {
@@ -62,22 +61,31 @@ export class BankAccountService {
     return true;
   };
 
-  getBankAccounts = () => {
-    return this.bankAccounts;
+  getBankAccounts = async () => {
+    try {
+      return await this.bankAccountRepository.getAll();
+    } catch (error) {
+      throw error;
+    }
   };
 
-  getBankAccount = (IBAN: string) => {
-    return this.bankAccounts.find((bank) => bank.IBAN === IBAN);
+  getBankAccount = async (IBAN: string) => {
+    try {
+      const bankAccount = await this.bankAccountRepository.getByIBAN(IBAN);
+      return bankAccount;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  addBankAccount = (
+  addBankAccount = async (
     companyId: string,
     name: string,
     department: string,
     IBAN: string,
     balance: Money
   ) => {
-    const newBankAccount = new BankAccount(
+    let newBankAccount = new BankAccount(
       generateUUID(),
       companyId,
       name,
@@ -85,7 +93,7 @@ export class BankAccountService {
       IBAN,
       balance
     );
-    this.bankAccounts.push(newBankAccount);
+    newBankAccount = await this.bankAccountRepository.add(newBankAccount);
     return newBankAccount;
   };
 
@@ -95,16 +103,17 @@ export class BankAccountService {
     amount: number
   ): Promise<boolean> => {
     try {
-      const sender = this.getBankAccount(IBANfrom);
-      const transactionMoney = new Money(amount, sender.balance.currency);
-      const receiver = this.getBankAccount(IBANto);
+      const sender = await this.getBankAccount(IBANfrom);
+      const receiver = await this.getBankAccount(IBANto);
       if (!sender || !receiver) {
         return false;
       }
-      return (
-        (await sender.send(transactionMoney)) &&
-        (await receiver.receive(transactionMoney))
-      );
+      const transactionMoney = new Money(amount, sender.balance.currency, true);
+      const senderStatus = await sender.send(transactionMoney);
+      const receiverStatus = await receiver.receive(transactionMoney);
+      if (!senderStatus || !receiverStatus) {
+        return false;
+      }
     } catch (error) {
       console.log(error);
       return false;

@@ -69,14 +69,14 @@ export class License {
   ) => {
     switch (licenseType) {
       case LicenseTypes.Basic:
-        this.basePrice = new Money(24.99, CurrencyCode.EUR);
-        this.pricePerEmployee = new Money(14.99, CurrencyCode.EUR);
+        this.basePrice = new Money(24.99, CurrencyCode.EUR, true);
+        this.pricePerEmployee = new Money(14.99, CurrencyCode.EUR, true);
         this.maxEmployeeNumber = 5;
         this.maxBankAccountsNumber = 2;
         break;
       case LicenseTypes.Pro:
-        this.pricePerEmployee = new Money(9.99, CurrencyCode.EUR);
-        this.basePrice = new Money(49.99, CurrencyCode.EUR);
+        this.pricePerEmployee = new Money(9.99, CurrencyCode.EUR, true);
+        this.basePrice = new Money(49.99, CurrencyCode.EUR, true);
         this.maxEmployeeNumber = 20;
         this.maxBankAccountsNumber = 3;
         break;
@@ -97,16 +97,16 @@ export class License {
     let startingBankAccountNumber = 10;
     switch (true) {
       case requestedEmployeeNumber <= 100:
-        this.pricePerEmployee = new Money(9.99, CurrencyCode.EUR);
+        this.pricePerEmployee = new Money(9.99, CurrencyCode.EUR, true);
         break;
       case requestedEmployeeNumber <= 500:
-        this.pricePerEmployee = new Money(4.99, CurrencyCode.EUR);
+        this.pricePerEmployee = new Money(4.99, CurrencyCode.EUR, true);
         break;
       case requestedEmployeeNumber > 500:
-        this.pricePerEmployee = new Money(2.99, CurrencyCode.EUR);
+        this.pricePerEmployee = new Money(2.99, CurrencyCode.EUR, true);
         break;
     }
-    this.basePrice = new Money(69.99, CurrencyCode.EUR);
+    this.basePrice = new Money(69.99, CurrencyCode.EUR, true);
     this.maxEmployeeNumber = startingEmployeeNumber + requestedEmployeeNumber;
     this.maxBankAccountsNumber =
       startingBankAccountNumber + requestedBankAccountNumber;
@@ -116,7 +116,7 @@ export class License {
     const fullPrice =
       this.basePrice.amount +
       this.pricePerEmployee.amount * this.registeredEmployees;
-    return new Money(fullPrice, CurrencyCode.EUR);
+    return new Money(fullPrice, CurrencyCode.EUR, true);
   };
 
   canRegisterEmployee = () => {

@@ -1,12 +1,11 @@
-import dotenv from "dotenv";
 import cors from "cors";
+import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import express, { Express } from "express";
 import { bankAccountRouter } from "./routes/bankAccountRoutes"
+import config from "../config";
 
-dotenv.config();
 const app: Express = express();
-const PORT: String | number = process.env.PORT || 6000;
 
 // * CORS Policy
 app.use(
@@ -15,13 +14,22 @@ app.use(
   })
 );
 
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // * App Routes
 app.use('/api/bank', bankAccountRouter);
 
-app.listen(PORT, async () => {
-  console.log("Server is running at port:", PORT);
+app.listen(config.server.port, async () => {
+  mongoose
+  .connect(config.mongo.url, { retryWrites: true, w: 'majority' })
+    .then(() => {
+      console.log(`Running on ENV = ${config.server.environment}`);
+      console.log('Connected to mongoDB.');
+    })
+    .catch((error) => {
+      console.log('Unable to connect.');
+      console.log(error);
+    });
+  console.log("Server is running at port:", config.server.port);
 });

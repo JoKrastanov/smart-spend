@@ -15,7 +15,7 @@ export const getConvertedValue = async (
     requestURL + `convert?from=${from}&to=${to}&amount=${amount}&places=2`;
   try {
     const response = await axios.get(getUrl);
-    const convertedMoney = new Money(response.data.result, to);
+    const convertedMoney = new Money(response.data.result, to, true);
     return convertedMoney;
   } catch (error) {
     return new Error(error);
