@@ -22,7 +22,7 @@ export class BankAccountController {
       const { IBAN } = req.params;
       const company = await this.service.getBankAccount(IBAN);
       if (!company) {
-        res.sendStatus(404);
+        res.status(404).json({ message: "This bank account does not exist." });
         return;
       }
       res.status(200).send(company);
@@ -31,7 +31,7 @@ export class BankAccountController {
     }
   };
 
-  getAllCompanies = async (req: Request, res: Response) => {
+  getAllBankAccounts = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
       if (
@@ -72,6 +72,16 @@ export class BankAccountController {
         return;
       }
       res.status(200).json({ message: "Money sent successfully" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+  test = async (req: Request, res: Response) => {
+    try {
+      console.log("Testing");
+      await this.service.test();
+      res.status(200).json({ message: "OK" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

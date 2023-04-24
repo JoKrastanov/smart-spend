@@ -119,4 +119,12 @@ export class BankAccountService {
       return false;
     }
   };
+
+  test = async () => {
+    try {
+      await this.bankAccountRepository.addTransaction();
+    } catch (error) {
+      throw error;
+    }
+  };
 }
