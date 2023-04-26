@@ -6,56 +6,53 @@ admin:
 apiEndpoints:
   identity:
     host: localhost
-    port: 4000
-    paths:
-      - /api/**
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    paths: ["/auth/**"]
   bankAccount:
     host: localhost
-    port: 6000
-    paths:
-      - /api/**
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    paths: ["/bank/**"]
   license:
     host: localhost
-    port: 5000
-    paths:
-      - /api/**
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
+    paths: ["/license/**", "/company/**"]
 serviceEndpoints:
   identity:
-    url: http://localhost:4000/api
+    url: http://identity-service:4000
   bankAccount:
-    url: http://localhost:6000/api
+    url: http://bankaccount-service:6000
   license:
-    url: http://localhost:5000/api
+    url: http://license-service:5000
 policies:
   - cors
-  - oauth2
-  - jwt
   - proxy
   - log
+  - rate-limit
+  - basic-auth
+  - oauth2
+  - key-auth
+  - expression
 pipelines:
-  identity_pipeline:
+  - name: identity
     apiEndpoints:
-      - auth
+      - identity
     policies:
-      - cors: {}
       - proxy:
           - action:
               serviceEndpoint: identity
               changeOrigin: true
-  bankAccount_pipeline:
+  - name: bankAccount
     apiEndpoints:
-      - bank
+      - bankAccount
     policies:
-      - cors: {}
       - proxy:
           - action:
               serviceEndpoint: bankAccount
               changeOrigin: true
-  license_pipeline:
+  - name: license
     apiEndpoints:
       - license
     policies:
-      - cors: {}
       - proxy:
           - action:
               serviceEndpoint: license

@@ -15,6 +15,9 @@ services:
         networks:
             - mynetwork
     identity-service:
+        image: identity-service
+        container_name: identity-service-container
+        hostname: identity-service
         depends_on:
             rabbitmq:
                 condition: service_healthy
@@ -27,6 +30,9 @@ services:
         networks:
             - mynetwork
     license-service:
+        image: license-service
+        hostname: license-service
+        container_name: license-service-container
         depends_on:
             rabbitmq:
                 condition: service_healthy
@@ -39,6 +45,9 @@ services:
         networks:
             - mynetwork
     bankaccount-service:
+        image: bankaccount-service
+        hostname: bankaccount-service
+        container_name: bankaccount-service-container
         depends_on:
             rabbitmq:
                 condition: service_healthy
@@ -51,21 +60,18 @@ services:
         networks:
             - mynetwork
     api-gateway:
-        image: expressgateway/express-gateway
+        container_name: api-gateway-container
+        image: api-gateway
+        build: ./apps/gateway
         ports:
           - 8080:8080
           - 9876:9876
-        environment:
-          - NODE_ENV=production
-          - EG_CONFIG_DIR=/var/lib/eg
-          - EG_LISTEN_PORT=8080
-          - EG_ADMIN_LISTEN_PORT=9876
-        volumes:
-          - ./apps/gateway/config:/var/lib/eg
         depends_on:
           - identity-service
           - bankaccount-service
           - license-service
+        networks:
+            - mynetwork
 networks:
     mynetwork:
         driver: bridge

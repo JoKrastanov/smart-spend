@@ -20,8 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // * App Routes
-app.use('/api/license', licenseRouter);
-app.use('/api/company', companyRouter);
+app.use('/license', licenseRouter);
+app.use('/company', companyRouter);
 
 app.listen(config.server.port, async () => {
   mongoose

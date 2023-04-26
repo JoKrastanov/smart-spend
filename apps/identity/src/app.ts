@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // * App Routes
-app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(config.server.port, async () => {
   mongoose

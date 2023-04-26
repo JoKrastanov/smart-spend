@@ -90,9 +90,9 @@ export class BankAccountRepository {
   // TODO: Configure Pool and SQL DB Connection
   addTransaction = async () => {
     try {
-      config.sql.pool.getConnection((err, connection) => {
-        console.log(connection.listenerCount("sleep"));
-      });
+      // config.sql.pool.getConnection((err, connection) => {
+      //   console.log(connection.listenerCount("sleep"));
+      // });
     } catch (error) {
       throw error;
     }
