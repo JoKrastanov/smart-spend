@@ -24,19 +24,18 @@ app.listen(config.server.port, async () => {
   mongoose
     .connect(config.mongo.url, { retryWrites: true, w: "majority" })
     .then(() => {
-      console.log(`Running on ENV = ${config.server.environment}`);
       console.log("Connected to mongoDB.");
     })
     .catch((error) => {
-      console.log("Unable to connect.");
-      console.log(error);
+      console.error("Unable to connect to mongoDB: ", error);
     });
-  // config.sql.connection.connect((error) => {
-  //   if (error) {
-  //     console.error("Error connecting to MySQL database: ", error);
-  //     return;
-  //   }
-  //   console.log("Connected to MySQL database!");
-  // });
+  config.sql.connection.connect((error) => {
+    if (error) {
+      console.error("Unable to connect to sql: ", error);
+      return;
+    }
+    console.log("Connected to sql.");
+  });
+  console.log(`Running on ENV = ${config.server.environment}`);
   console.log("Server is running at port:", config.server.port);
 });
