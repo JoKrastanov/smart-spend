@@ -6,14 +6,18 @@ import { Money } from "../models/money";
 import { RabbitMQService } from "./RabbitMQService";
 import config from "../../config";
 import { BankAccountRepository } from "../repositories/bankAccountRepository";
+import { TransactionService } from "./transactionService";
+import { Transaction } from "../models/transaction";
 
 export class BankAccountService {
+  private transactionService: TransactionService;
   private bankAccountRepository: BankAccountRepository;
   private jwtAuth;
   private rabbitMQService: RabbitMQService;
 
   constructor() {
     this.bankAccountRepository = new BankAccountRepository();
+    this.transactionService = new TransactionService();
     this.jwtAuth = JWTAuthentication();
     if (
       config.server.environment !== "test" &&
@@ -85,6 +89,7 @@ export class BankAccountService {
     IBAN: string,
     balance: Money
   ) => {
+    try {
     let newBankAccount = new BankAccount(
       generateUUID(),
       companyId,
@@ -95,6 +100,9 @@ export class BankAccountService {
     );
     newBankAccount = await this.bankAccountRepository.add(newBankAccount);
     return newBankAccount;
+    } catch (error) {
+     return null; 
+    }
   };
 
   transferMoney = async (
@@ -111,18 +119,25 @@ export class BankAccountService {
       const transactionMoney = new Money(amount, sender.balance.currency, true);
       const senderStatus = await sender.send(transactionMoney);
       const receiverStatus = await receiver.receive(transactionMoney);
+      const newTransaction = new Transaction(
+        IBANfrom,
+        IBANto,
+        amount,
+        sender.balance.currency
+      );
       if (!senderStatus || !receiverStatus) {
         return false;
       }
+      return await this.createTransaction(newTransaction);
     } catch (error) {
       console.log(error);
       return false;
     }
   };
 
-  test = async () => {
+  createTransaction = async (newTransaction: Transaction) => {
     try {
-      await this.bankAccountRepository.addTransaction();
+      return await this.transactionService.addTransaction(newTransaction);
     } catch (error) {
       throw error;
     }

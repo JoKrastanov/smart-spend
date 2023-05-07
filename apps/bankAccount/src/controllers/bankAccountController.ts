@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { BankAccountService } from "../services/bankAccountService";
+import { Money } from "../models/money";
 
 export class BankAccountController {
   private service: BankAccountService;
@@ -49,6 +50,26 @@ export class BankAccountController {
     }
   };
 
+  addBankAccount = async (req: Request, res: Response) => {
+    try {
+      const { token, refresh } = req.headers;
+      const { companyId, name, department, IBAN, balance, currency } = req.body;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const money = new Money(balance, currency, true);
+      const newCompany = await this.service.addBankAccount(companyId, name, department, IBAN, money);
+      res.status(200).send(newCompany);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
   sendMoney = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
@@ -72,16 +93,6 @@ export class BankAccountController {
         return;
       }
       res.status(200).json({ message: "Money sent successfully" });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  };
-
-  test = async (req: Request, res: Response) => {
-    try {
-      console.log("Testing");
-      await this.service.test();
-      res.status(200).json({ message: "OK" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

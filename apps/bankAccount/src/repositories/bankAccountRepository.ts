@@ -2,8 +2,6 @@ import { BankAccount } from "../models/bankAccount";
 import { Money } from "../models/money";
 import { BankAccountCollection } from "../schemas/bankAccountSchema";
 import { CurrencyCode } from "../types/currencies";
-import config from "../../config";
-import { connection } from "mongoose";
 
 export class BankAccountRepository {
   private repository = BankAccountCollection;
@@ -81,18 +79,6 @@ export class BankAccountRepository {
         return null;
       }
       return bankAccountToUpdate;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-
-  // TODO: Configure Pool and SQL DB Connection
-  addTransaction = async () => {
-    try {
-      // config.sql.pool.getConnection((err, connection) => {
-      //   console.log(connection.listenerCount("sleep"));
-      // });
     } catch (error) {
       throw error;
     }
