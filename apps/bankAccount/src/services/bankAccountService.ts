@@ -90,18 +90,18 @@ export class BankAccountService {
     balance: Money
   ) => {
     try {
-    let newBankAccount = new BankAccount(
-      generateUUID(),
-      companyId,
-      name,
-      department,
-      IBAN,
-      balance
-    );
-    newBankAccount = await this.bankAccountRepository.add(newBankAccount);
-    return newBankAccount;
+      let newBankAccount = new BankAccount(
+        generateUUID(),
+        companyId,
+        name,
+        department,
+        IBAN,
+        balance
+      );
+      newBankAccount = await this.bankAccountRepository.add(newBankAccount);
+      return newBankAccount;
     } catch (error) {
-     return null; 
+      return null;
     }
   };
 
@@ -128,6 +128,8 @@ export class BankAccountService {
       if (!senderStatus || !receiverStatus) {
         return false;
       }
+      await this.bankAccountRepository.update(sender);
+      await this.bankAccountRepository.update(receiver);
       return await this.createTransaction(newTransaction);
     } catch (error) {
       console.log(error);

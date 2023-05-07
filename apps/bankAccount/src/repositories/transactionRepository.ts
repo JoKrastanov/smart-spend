@@ -19,11 +19,9 @@ export class TransactionRepository {
       )}, ${mysql.escape(amount)}, ${mysql.escape(currency)})`;
       config.sql.connection.query(sql, (err, result) => {
         if (err) {
-          console.error("Error executing query: " + err.stack);
+          console.error('Error executing query: ' + err.stack);
           return;
         }
-
-        console.log("Query results:", result);
       });
       return true;
     } catch (error) {
