@@ -1,14 +1,7 @@
 import { Money } from "../../src/models/money";
-import { BankAccountService } from "../../src/services/bankAccountService";
 import { CurrencyCode } from "../../src/types/currencies";
 
 describe("BankAccountService", () => {
-  let bankAccountService: BankAccountService;
-
-  beforeAll(() => {
-    bankAccountService = new BankAccountService();
-  });
-
   const addBankAccount = jest.fn().mockResolvedValue({
     companyId: "123",
     IBAN: "TESTIBAN123",
@@ -17,9 +10,9 @@ describe("BankAccountService", () => {
   });
 
   describe("addBankAccount", () => {
-    test("should add a bank account", async () => {
+    test("should add a bank account", () => {
       try {
-        const result = await addBankAccount(
+        const result = addBankAccount(
           "123",
           "Test Bank Account",
           "IT",
@@ -33,6 +26,6 @@ describe("BankAccountService", () => {
         expect(result.balance).toBe(new Money(1000, CurrencyCode.EUR, true));
         expect(result.department).toBe("IT");
       } catch (error) {}
-    }, 15000);
+    });
   });
 });
