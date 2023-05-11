@@ -21,13 +21,13 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          docker build -t gcr.io/YOUR_PROJECT_ID/identity-service .
-          docker push gcr.io/YOUR_PROJECT_ID/identity-service
+          docker build -t gcr.io/smartspend/identity-service .
+          docker push gcr.io/smartspend/identity-service
 
       - name: Configure kubectl
         run: |
-          gcloud container clusters get-credentials YOUR_CLUSTER_NAME --zone YOUR_CLUSTER_ZONE
+          gcloud container clusters get-credentials smartspend-identity --zone europe-west4
 
       - name: Apply Kubernetes configuration
         run: |
-          kubectl apply -f path/to/your/kubernetes-config.yaml
+          kubectl apply -f kubernetes/configs/identity-config.yaml
