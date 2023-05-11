@@ -21,7 +21,7 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          cd ./apps/identity
+          cd apps/identity
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend
 
@@ -31,5 +31,5 @@ jobs:
 
       - name: Apply Kubernetes configuration
         run: |
-          cd kuberetes/configs/
+          cd kuberetes/configs
           kubectl apply -f identity-config.yaml
