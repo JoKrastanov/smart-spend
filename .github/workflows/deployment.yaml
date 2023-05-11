@@ -21,6 +21,7 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
+          ls
           cd ../../apps/identity
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend
