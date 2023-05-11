@@ -17,12 +17,12 @@ jobs:
 
       - name: Configure Docker to use the gcloud command-line tool
         run: |
-          gcloud auth configure-docker
+          gcloud auth configure-docker europe-west4-docker.pkg.dev
 
       - name: Build and Push Docker image
         run: |
-          docker build -t gcr.io/smartspend/identity-service .
-          docker push gcr.io/smartspend/identity-service
+          docker build -t europe-west4-docker.pkg.dev/smart-spend/identity-service .
+          docker push europe-west4-docker.pkg.dev/smart-spend/identity-service
 
       - name: Configure kubectl
         run: |
