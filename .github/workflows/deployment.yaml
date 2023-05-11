@@ -18,6 +18,10 @@ jobs:
       - name: Configure Docker to use the gcloud command-line tool
         run: |
           gcloud auth configure-docker europe-west4-docker.pkg.dev
+          
+      - name: Check current working directory
+        run: |
+          ls
 
       - name: Build and Push Docker image
         run: |
