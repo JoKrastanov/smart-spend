@@ -31,6 +31,7 @@ jobs:
 
       - name: Configure kubectl
         run: |
+          gcloud components install kubectl
           gcloud container clusters get-credentials smartspend-identity --zone europe-west4
 
       - name: Apply Kubernetes configuration
