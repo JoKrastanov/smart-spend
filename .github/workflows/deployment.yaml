@@ -21,6 +21,11 @@ jobs:
           project_id: smartspend
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
+          
+      - name: Apply secrets
+        run: |
+          cd kubernetes/secrets
+          kubectl apply -f shared-secrets.yaml
 
       - name: Configure Docker to use the gcloud command-line tool
         run: |
