@@ -57,7 +57,7 @@ spec:
           secret:
             secretName: cross-service-secrets
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: identity-service-autoscaler
@@ -66,8 +66,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: identity-service-deployment
-  minReplicas: 2
-  maxReplicas: 5
+  minReplicas: 1
+  maxReplicas: 10
   metrics:
     - type: Resource
       resource:
@@ -79,5 +79,5 @@ spec:
       resource:
         name: memory
         target:
-          type: Utilization
-          averageUtilization: 70
+          type: AverageValue
+          averageValue: 100Mi
