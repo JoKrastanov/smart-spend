@@ -27,7 +27,7 @@ jobs:
         run: |
           cd apps/identity
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend -f Dockerfile .
-          docker push europe-west4-docker.pkg.dev/smartspend/smart-spend
+          docker push europe-west4-docker.pkg.dev/smartspend/smart-spend:latest
 
       - name: Configure kubectl
         run: |
