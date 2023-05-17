@@ -57,27 +57,25 @@ spec:
           secret:
             secretName: cross-service-secrets
 ---
-apiVersion: autoscaling/v2beta2
-kind: HorizontalPodAutoscaler
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
 metadata:
-  name: identity-service-autoscaler
+  name: identity-service-deployment
+  namespace: default
+  clusterName: smartspend-identity
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
+  targetRef:
     kind: Deployment
     name: identity-service-deployment
-  minReplicas: 1
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: AverageValue
-          averageValue: 100Mi
+    apiVersion: apps/v1
+  updatePolicy:
+    updateMode: Auto
+  resourcePolicy:
+    containerPolicies:
+      - containerName: identity-service-container
+        mode: Auto
+        controlledResources:
+          - cpu
+          - memory
+        minAllowed: {}
+        maxAllowed: {}
