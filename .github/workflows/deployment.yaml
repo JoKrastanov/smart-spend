@@ -23,7 +23,7 @@ jobs:
         run: |
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend -f apps/identity/Dockerfile .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend
-        working-directory: .
+        working-directory: ../../
 
       - name: Configure kubectl
         run: |
@@ -32,4 +32,4 @@ jobs:
       - name: Apply Kubernetes configuration
         run: |
           kubectl apply -f kuberetes/configs/identity-config.yaml
-        working-directory: .
+        working-directory: ../../
