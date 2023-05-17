@@ -1,8 +1,5 @@
 name: Deploy to GKE
 
-# on:
-#   workflow_dispatch:
-
 on:
   push:
     branches: [gcloud-pipeline]
@@ -25,7 +22,7 @@ jobs:
 
       - name: Build and Push Docker image
         run: |
-          cd ../../apps/identity
+          cd apps/identity
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend -f Dockerfile .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend
 
@@ -35,5 +32,5 @@ jobs:
 
       - name: Apply Kubernetes configuration
         run: |
-          kubectl apply -f kuberetes/configs/identity-config.yaml
-        working-directory: ../../
+          cd kubernetes/configs
+          kubectl apply -f identity-config.yaml
