@@ -62,7 +62,6 @@ kind: VerticalPodAutoscaler
 metadata:
   name: identity-service-deployment
   namespace: default
-  clusterName: smartspend-identity
 spec:
   targetRef:
     kind: Deployment
