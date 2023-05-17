@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: identity-service-container
-          image: identity-service
+          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
           ports:
             - containerPort: 4000
           env:
