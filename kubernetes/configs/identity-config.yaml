@@ -81,9 +81,3 @@ spec:
         target:
           type: Utilization
           averageUtilization: 70
-    - type: Pods
-      pods:
-        metricName: http_requests
-        target:
-          type: AverageValue
-          averageValue: 100
