@@ -26,7 +26,7 @@ jobs:
       - name: Build and Push Docker image
         run: |
           cd apps/identity
-          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend -f Dockerfile .
+          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest -f Dockerfile .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
 
       - name: Configure kubectl
