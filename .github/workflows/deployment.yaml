@@ -1,6 +1,7 @@
 name: Deploy to GKE
 
 on:
+  workflow_dispatch:
   push:
     branches: [gcloud-pipeline]
 
@@ -36,8 +37,14 @@ jobs:
         run: |
           gcloud components install kubectl
           gcloud container clusters get-credentials smartspend-identity --zone europe-west4
+          
+      - name: Apply Kubernetes secrets
+        run: |
+          cd kubernetes/secrets
+          kubectl apply -f shared-secrets.yaml
 
       - name: Apply Kubernetes configuration
         run: |
           cd kubernetes/configs
           kubectl apply -f identity-config.yaml
+
