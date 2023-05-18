@@ -32,4 +32,4 @@ jobs:
           gcloud components install kubectl
           gcloud container clusters get-credentials smartspend-identity --zone europe-west4
           cd ../../kubernetes
-          kubectl apply -f secrets/shared-secrets.yaml -f configs/identity-config.yaml -f services/identity-service-service.yaml
+          kubectl apply -f secrets/shared-secrets.yaml -f configs/identity-config.yaml
