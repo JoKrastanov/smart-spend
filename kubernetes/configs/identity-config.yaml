@@ -19,54 +19,16 @@ spec:
           image: europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
           ports:
             - containerPort: 4000
-          env:
-            - name: NODE_ENV
-              value: production
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: JWT_SECRET
-            - name: JWT_REFRESH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: JWT_REFRESH_SECRET
-            - name: JWT_EXPIRES_IN
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: JWT_EXPIRES_IN
-            - name: JWT_REFRESH_EXPIRES_IN
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: JWT_REFRESH_EXPIRES_IN
-            - name: MONGO_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: MONGO_DB_USER
-            - name: MONGO_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: MONGO_DB_PASSWORD
-            - name: RabbitMQ_BASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: RabbitMQ_BASE_URL
-            - name: RabbitMQ_USER
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: RabbitMQ_USER
-            - name: RabbitMQ_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: cross-service-secrets
-                  key: RabbitMQ_PASSWORD
+          envFrom:
+            - secretRef:
+                name: cross-service-secrets
+          resources:
+            limits:
+              cpu: 1
+              memory: "512Mi"
+            requests:
+              cpu: 0.5
+              memory: "256Mi"
       volumes:
         - name: shared-secrets
           secret:
@@ -91,5 +53,9 @@ spec:
         controlledResources:
           - cpu
           - memory
-        minAllowed: {}
-        maxAllowed: {}
+        minAllowed:
+          cpu: 0.1
+          memory: "64Mi"
+        maxAllowed:
+          cpu: 2
+          memory: "1Gi"
