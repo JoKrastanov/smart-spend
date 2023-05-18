@@ -64,12 +64,12 @@ services:
         image: api-gateway
         build: ./apps/gateway
         ports:
-          - 8080:8080
-          - 9876:9876
+            - 8080:8080
+            - 9876:9876
         depends_on:
-          - identity-service
-          - bankaccount-service
-          - license-service
+            - identity-service
+            - bankaccount-service
+            - license-service
         networks:
             - mynetwork
 networks:

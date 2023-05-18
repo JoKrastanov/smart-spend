@@ -52,6 +52,21 @@ spec:
                 secretKeyRef:
                   name: cross-service-secrets
                   key: MONGO_DB_PASSWORD
+            - name: RabbitMQ_BASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: cross-service-secrets
+                  key: RabbitMQ_BASE_URL
+            - name: RabbitMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cross-service-secrets
+                  key: RabbitMQ_USER
+            - name: RabbitMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cross-service-secrets
+                  key: RabbitMQ_PASSWORD
       volumes:
         - name: shared-secrets
           secret:
