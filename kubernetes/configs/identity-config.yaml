@@ -30,23 +30,27 @@ spec:
               cpu: 0.5
               memory: "256Mi"
 ---
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: identity-service-hpa
 spec:
   scaleTargetRef:
+    apiVersion: apps/v1
     kind: Deployment
     name: identity-service-deployment
-    apiVersion: apps/v1
   minReplicas: 2
   maxReplicas: 5
   metrics:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: 50
+        target:
+          type: Utilization
+          averageUtilization: 50
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: 50
+        target:
+          type: Utilization
+          averageUtilization: 50
