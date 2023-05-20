@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-service-deployment
+  labels:
+    app: identity-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: identity-service
+  template:
+    metadata:
+      labels:
+        app: identity-service
+    spec:
+      containers:
+        - name: identity-service-container
+          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
+          ports:
+            - containerPort: 4000
+          envFrom:
+            - secretRef:
+                name: cross-service-secrets
+          resources:
+            limits:
+              cpu: 1
+              memory: "512Mi"
+            requests:
+              cpu: 0.5
+              memory: "256Mi"
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: identity-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: identity-service-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 50
