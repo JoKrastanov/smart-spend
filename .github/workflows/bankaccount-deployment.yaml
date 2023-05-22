@@ -1,4 +1,4 @@
-name: Deploy License to GKE
+name: Deploy Bank to GKE
 
 on:
   workflow_dispatch:

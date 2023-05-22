@@ -1,4 +1,4 @@
-name: Deploy License to GKE
+name: Deploy Gateway to GKE
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ jobs:
 
       - name: Build and Push Docker image, Configure Docker to use gcloud, and Apply Kubernetes resources
         run: |
-          cd apps/bankAccount
+          cd apps/gateway
           gcloud auth configure-docker europe-west4-docker.pkg.dev
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/gateway:latest -f Dockerfile .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/gateway:latest
