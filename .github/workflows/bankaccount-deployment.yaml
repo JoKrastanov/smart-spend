@@ -24,9 +24,9 @@ jobs:
       - name: Build and Push Docker image, Configure Docker to use gcloud, and Apply Kubernetes resources
         run: |
           cd apps/bankAccount
-          gcloud auth configure-docker europe-west3-docker.pkg.dev
-          docker build -t europe-west3-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest -f Dockerfile .
-          docker push europe-west3-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
+          gcloud auth configure-docker europe-west4-docker.pkg.dev
+          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest -f Dockerfile .
+          docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
           gcloud components install kubectl
           gcloud container --project "smartspend" clusters create-auto "smartspend-bankaccount" --region "europe-west3" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west3/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
           gcloud container clusters get-credentials smartspend-bankaccount --zone europe-west3
