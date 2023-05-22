@@ -2,8 +2,6 @@ name: Deploy Bank to GKE
 
 on:
   workflow_dispatch:
-  push:
-    branches: [gcloud-pipeline]
 
 jobs:
   deploy:
@@ -28,7 +26,7 @@ jobs:
           cd apps/bankAccount
           gcloud auth configure-docker europe-west4-docker.pkg.dev
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest -f Dockerfile .
-          docker push europe-west3-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
+          docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
           gcloud components install kubectl
           gcloud container clusters get-credentials smartspend-bankaccount --zone europe-west3
           cd ../../kubernetes

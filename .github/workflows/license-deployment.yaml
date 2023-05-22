@@ -2,8 +2,6 @@ name: Deploy License to GKE
 
 on:
   workflow_dispatch:
-  push:
-    branches: [gcloud-pipeline]
 
 jobs:
   deploy:
