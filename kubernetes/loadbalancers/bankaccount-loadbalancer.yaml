@@ -4,7 +4,7 @@ metadata:
   annotations:
     cloud.google.com/neg: '{"ingress":true}'
   labels:
-    app: identity-service
+    app: bankaccount-service
 spec:
   allocateLoadBalancerNodePorts: true
   externalTrafficPolicy: Cluster
@@ -13,12 +13,12 @@ spec:
     - nodePort: 31480
       port: 80
       protocol: TCP
-      targetPort: 4000
+      targetPort: 6000
   selector:
-    app: identity-service
+    app: bankaccount-service
   sessionAffinity: None
   type: LoadBalancer
 status:
   loadBalancer:
     ingress:
-      - ip: 34.90.128.82
+      - ip: 34.90.128.84

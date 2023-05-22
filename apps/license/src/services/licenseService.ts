@@ -22,10 +22,7 @@ export class LicenseService {
     this.jwtAuth = JWTAuthentication();
     this.licenseRepository = new LicenseRepository();
     this.companyService = new CompanyService();
-    if (
-      config.server.environment !== "test" &&
-      config.server.environment !== "development"
-    ) {
+    if (config.server.environment !== "test") {
       this.rabbitMQService = new RabbitMQService();
       this.init();
     }

@@ -1,27 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: identity-service-deployment
+  name: gateway-service-deployment
   labels:
-    app: identity-service
+    app: gateway-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: identity-service
+      app: gateway-service
   template:
     metadata:
       labels:
-        app: identity-service
+        app: gateway-service
     spec:
       containers:
-        - name: identity-service-container
-          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
+        - name: gateway-service-container
+          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/gateway:latest
           ports:
-            - containerPort: 4000
-          envFrom:
-            - secretRef:
-                name: cross-service-secrets
+            - containerPort: 8080
           resources:
             limits:
               cpu: 1
@@ -33,12 +30,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: identity-service-hpa
+  name: gateway-service-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: identity-service-deployment
+    name: gateway-service-deployment
   minReplicas: 1
   maxReplicas: 5
   metrics:
