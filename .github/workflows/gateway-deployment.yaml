@@ -27,8 +27,8 @@ jobs:
         run: |
           cd apps/gateway
           gcloud auth configure-docker europe-west3-docker.pkg.dev
-          docker build -t europe-west3-docker.pkg.dev/smartspend/smart-spend/gateway:latest -f Dockerfile .
-          docker push europe-west3-docker.pkg.dev/smartspend/smart-spend/gateway:latest
+          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/gateway:latest -f Dockerfile .
+          docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/gateway:latest
           gcloud components install kubectl
           gcloud container clusters get-credentials smartspend-gateway --zone europe-west3
           cd ../../kubernetes
