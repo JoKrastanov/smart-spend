@@ -22,10 +22,7 @@ export class LicenseService {
     this.jwtAuth = JWTAuthentication();
     this.licenseRepository = new LicenseRepository();
     this.companyService = new CompanyService();
-    if (
-      config.server.environment !== "test" &&
-      config.server.environment !== "development"
-    ) {
+    if (config.server.environment !== "test") {
       this.rabbitMQService = new RabbitMQService();
       this.init();
     }
@@ -152,15 +149,15 @@ export class LicenseService {
         currency,
       });
       let response;
-      await this.rabbitMQService.consumeMessages(
-        "bank-accounts-response",
-        async (message) => {
-          if (message.message !== "created") {
-            response = null;
-          }
-          response = message.message;
-        }
-      );
+      // await this.rabbitMQService.consumeMessages(
+      //   "bank-accounts-response",
+      //   async (message) => {
+      //     if (message.message !== "created") {
+      //       response = null;
+      //     }
+      //     response = message.message;
+      //   }
+      // );
       license.registerBankAccount();
       return response;
     } catch (error) {

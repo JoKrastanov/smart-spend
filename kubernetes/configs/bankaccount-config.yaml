@@ -1,27 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: identity-service-deployment
+  name: bankaccount-service-deployment
   labels:
-    app: identity-service
+    app: bankaccount-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: identity-service
+      app: bankaccount-service
   template:
     metadata:
       labels:
-        app: identity-service
+        app: bankaccount-service
     spec:
       containers:
-        - name: identity-service-container
-          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
+        - name: bankaccount-service-container
+          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
           ports:
-            - containerPort: 4000
+            - containerPort: 6000
           envFrom:
             - secretRef:
                 name: cross-service-secrets
+            - secretRef:
+                name: bank-service-secrets
           resources:
             limits:
               cpu: 1
@@ -33,12 +35,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: identity-service-hpa
+  name: bankaccount-service-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: identity-service-deployment
+    name: bankaccount-service-deployment
   minReplicas: 1
   maxReplicas: 5
   metrics:
