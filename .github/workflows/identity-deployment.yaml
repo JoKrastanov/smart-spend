@@ -21,6 +21,7 @@ jobs:
           export_default_credentials: true
 
   create-cluster:
+    needs: auth
     runs-on: ubuntu-latest
     steps:
       - name: Build and Push Docker image, Configure Docker to use gcloud, and Apply Kubernetes resources
@@ -29,6 +30,7 @@ jobs:
           gcloud container --project "smartspend" clusters create-auto "smartspend-identity" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
 
   deploy-identity:
+    needs: [auth, create-cluster]
     runs-on: ubuntu-latest
     steps:
       - name: Build and Push docker image
