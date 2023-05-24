@@ -23,7 +23,6 @@ jobs:
           gcloud container --project "smartspend" clusters create-auto "smartspend-identity" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
           fi
 
-
   deploy-identity:
     needs: create-cluster
     runs-on: ubuntu-latest
@@ -50,6 +49,7 @@ jobs:
 
       - name: Upload Kubernetes config
         run: |
+          gcloud components install kubectl
           gcloud container clusters get-credentials smartspend-identity --zone europe-west4
           cd ../../kubernetes
           kubectl apply -f secrets/shared-secrets.yaml -f configs/identity-config.yaml -f loadbalancers/identity-loadbalancer.yaml
