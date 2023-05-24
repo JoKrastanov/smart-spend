@@ -149,15 +149,15 @@ export class LicenseService {
         currency,
       });
       let response;
-      await this.rabbitMQService.consumeMessages(
-        "bank-accounts-response",
-        async (message) => {
-          if (message.message !== "created") {
-            response = null;
-          }
-          response = message.message;
-        }
-      );
+      // await this.rabbitMQService.consumeMessages(
+      //   "bank-accounts-response",
+      //   async (message) => {
+      //     if (message.message !== "created") {
+      //       response = null;
+      //     }
+      //     response = message.message;
+      //   }
+      // );
       license.registerBankAccount();
       return response;
     } catch (error) {

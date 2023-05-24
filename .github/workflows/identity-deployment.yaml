@@ -1,12 +1,11 @@
-name: Deploy Identity to GKE
+name: Deploy GKE
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  auth:
     runs-on: ubuntu-latest
-
     steps:
       - name: Log in to Docker
         run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
@@ -21,14 +20,26 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
 
+  create-cluster:
+    runs-on: ubuntu-latest
+    steps:
       - name: Build and Push Docker image, Configure Docker to use gcloud, and Apply Kubernetes resources
+        run: |
+          gcloud components install kubectl
+          gcloud container --project "smartspend" clusters create-auto "smartspend-identity" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
+
+  deploy-identity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and Push docker image
         run: |
           cd apps/identity
           gcloud auth configure-docker europe-west4-docker.pkg.dev
           docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest -f Dockerfile .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/identity:latest
-          gcloud components install kubectl
-          gcloud container --project "smartspend" clusters create-auto "smartspend-identity" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
+
+      - name: Upload Kubernetes config
+        run: |
           gcloud container clusters get-credentials smartspend-identity --zone europe-west4
           cd ../../kubernetes
           kubectl apply -f secrets/shared-secrets.yaml -f configs/identity-config.yaml -f loadbalancers/identity-loadbalancer.yaml

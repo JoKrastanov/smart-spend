@@ -18,7 +18,7 @@ export class AuthService {
   constructor() {
     this.jwtAuth = JWTAuthentication();
     this.authRepository = new AuthRepository();
-    if (config.server.environment !== "test" && config.server.environment !== "development") {
+    if (config.server.environment !== "test") {
       this.rabbitMQService = new RabbitMQService();
       this.init();
     }
@@ -65,7 +65,7 @@ export class AuthService {
     if (config.server.environment === "development") {
       return true;
     }
-    if (!authorization || !refresh || authorization === "null" ) {
+    if (!authorization || !refresh || authorization === "null") {
       return false;
     }
     if (!(await this.jwtAuth.verifyJWTToken(authorization))) {

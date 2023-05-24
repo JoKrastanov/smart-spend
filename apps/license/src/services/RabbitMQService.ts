@@ -1,5 +1,8 @@
 import { connect, Channel } from "amqplib";
+import dotenv from "dotenv";
 import config from "../../config";
+
+dotenv.config();
 
 export interface MessageHandler {
   (message: any): Promise<void>;
@@ -7,7 +10,9 @@ export interface MessageHandler {
 
 export class RabbitMQService {
   private channel: Channel | null = null;
-  private conUrl = config.rabbitMq.url;
+  private conUrl = process.env.RabbitMQ_BASE_URL
+    ? config.rabbitMq.url
+    : "amqp://rabbitmq:5672";
 
   async connect() {
     try {
