@@ -5,7 +5,6 @@ on:
 
 jobs:
   create-cluster:
-    needs: auth
     runs-on: ubuntu-latest
     steps:
       - name: Set up Google Cloud SDK
@@ -21,7 +20,7 @@ jobs:
           gcloud container --project "smartspend" clusters create-auto "smartspend-identity" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
 
   deploy-identity:
-    needs: [auth, create-cluster]
+    needs: create-cluster
     runs-on: ubuntu-latest
     steps:
       - name: Log in to Docker
