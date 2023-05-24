@@ -75,7 +75,7 @@ jobs:
         run: |
           cd apps/bankAccount
           gcloud auth configure-docker europe-west4-docker.pkg.dev
-          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/bank-accont:latest -f Dockerfile .
+          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/bank-account:latest -f Dockerfile .
           docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/bank-account:latest
 
       - name: Upload Kubernetes config
