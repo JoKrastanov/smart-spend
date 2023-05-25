@@ -1,7 +1,8 @@
 name: Deploy GKE
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   create-cluster:
@@ -51,7 +52,7 @@ jobs:
         run: |
           gcloud components install kubectl
           gcloud container clusters get-credentials smartspend --zone europe-west4
-          cd ../../kubernetes
+          cd kubernetes
           kubectl apply -f secrets/shared-secrets.yaml -f configs/identity-config.yaml -f loadbalancers/identity-loadbalancer.yaml
 
   deploy-bank:
