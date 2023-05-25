@@ -19,10 +19,9 @@ export class BankAccountService {
     this.bankAccountRepository = new BankAccountRepository();
     this.transactionService = new TransactionService();
     this.jwtAuth = JWTAuthentication();
-    if (config.server.environment !== "test") {
-      this.rabbitMQService = new RabbitMQService();
-      this.init();
-    }
+    if (config.server.environment === "test") return;
+    this.rabbitMQService = new RabbitMQService();
+    this.init();
   }
 
   private init = async () => {

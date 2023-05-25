@@ -18,10 +18,9 @@ export class AuthService {
   constructor() {
     this.jwtAuth = JWTAuthentication();
     this.authRepository = new AuthRepository();
-    if (config.server.environment !== "test") {
-      this.rabbitMQService = new RabbitMQService();
-      this.init();
-    }
+    if (config.server.environment === "test") return;
+    this.rabbitMQService = new RabbitMQService();
+    this.init();
   }
 
   private init = async () => {
@@ -29,7 +28,7 @@ export class AuthService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("users");
       this.rabbitMQService.consumeMessages("users", async (message) => {
-        const user = await this.addUser(
+        await this.addUser(
           message.firstName,
           message.lastName,
           message.address,
@@ -41,7 +40,6 @@ export class AuthService {
           message.department,
           message.accountType
         );
-        this.rabbitMQService.sendMessage("users", user.user);
       });
     } catch (error) {
       console.log(error);

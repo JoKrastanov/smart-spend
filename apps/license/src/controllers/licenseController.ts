@@ -139,7 +139,7 @@ export class LicenseController {
         department,
         accountType
       );
-      res.sendStatus(200);
+      res.status(200).json({});
     } catch (error) {
       res.status(500).json({ message: error.getMessage() });
     }

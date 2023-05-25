@@ -22,10 +22,9 @@ export class LicenseService {
     this.jwtAuth = JWTAuthentication();
     this.licenseRepository = new LicenseRepository();
     this.companyService = new CompanyService();
-    if (config.server.environment !== "test") {
-      this.rabbitMQService = new RabbitMQService();
-      this.init();
-    }
+    if (config.server.environment === "test") return;
+    this.rabbitMQService = new RabbitMQService();
+    this.init();
   }
 
   private init = async () => {
@@ -134,7 +133,7 @@ export class LicenseService {
     IBAN: string,
     balance: number,
     currency: CurrencyCode
-  ): Promise<String> => {
+  ): Promise<Boolean> => {
     try {
       const license = await this.getLicenseByCompany(companyId);
       if (!license || !license.canAddBankAccount()) {
@@ -148,18 +147,9 @@ export class LicenseService {
         balance,
         currency,
       });
-      let response;
-      // await this.rabbitMQService.consumeMessages(
-      //   "bank-accounts-response",
-      //   async (message) => {
-      //     if (message.message !== "created") {
-      //       response = null;
-      //     }
-      //     response = message.message;
-      //   }
-      // );
       license.registerBankAccount();
-      return response;
+      await this.licenseRepository.update(license);
+      return true;
     } catch (error) {
       throw error;
     }
@@ -195,6 +185,7 @@ export class LicenseService {
         accountType,
       });
       license.registerEmployee();
+      await this.licenseRepository.update(license);
     } catch (error) {
       return console.log(error);
     }

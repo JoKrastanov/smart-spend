@@ -16,11 +16,11 @@ jobs:
 
       - name: Build and Push Docker image, Configure Docker to use gcloud, and Apply Kubernetes resources
         run: |
-          if gcloud container clusters describe smartspend-identity --zone europe-west4 &> /dev/null; then
-          echo "Kubernetes cluster smartspend-identity already exists. Skipping cluster creation."
+          if gcloud container clusters describe smartspend --zone europe-west4 &> /dev/null; then
+          echo "Kubernetes cluster smartspend already exists. Skipping cluster creation."
           else
           gcloud components install kubectl
-          gcloud container --project "smartspend" clusters create-auto "smartspend-identity" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
+          gcloud container --project "smartspend" clusters create-auto "smartspend" --region "europe-west4" --release-channel "regular" --network "projects/smartspend/global/networks/default" --subnetwork "projects/smartspend/regions/europe-west4/subnetworks/default" --cluster-ipv4-cidr "/17" --services-ipv4-cidr "/22"
           fi
 
   deploy-identity:
@@ -50,8 +50,8 @@ jobs:
       - name: Upload Kubernetes config
         run: |
           gcloud components install kubectl
-          gcloud container clusters get-credentials smartspend-identity --zone europe-west4
-          cd kubernetes
+          gcloud container clusters get-credentials smartspend --zone europe-west4
+          cd ../../kubernetes
           kubectl apply -f secrets/shared-secrets.yaml -f configs/identity-config.yaml -f loadbalancers/identity-loadbalancer.yaml
 
   deploy-bank:
@@ -81,6 +81,6 @@ jobs:
       - name: Upload Kubernetes config
         run: |
           gcloud components install kubectl
-          gcloud container clusters get-credentials smartspend-identity --zone europe-west4
+          gcloud container clusters get-credentials smartspend --zone europe-west4
           cd kubernetes
           kubectl apply -f secrets/shared-secrets.yaml -f secrets/bank-service-secrets.yaml -f configs/bankaccount-config.yaml -f loadbalancers/identity-loadbalancer.yaml
