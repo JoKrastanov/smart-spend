@@ -20,4 +20,12 @@ export class TransactionService {
       throw error;
     }
   };
+
+  getTransactions = async (IBAN: string): Promise<any[]> => {
+    try {
+      return await this.transactionRepository.getTransactions(IBAN);
+    } catch (error) {
+      throw error;
+    }
+  };
 }

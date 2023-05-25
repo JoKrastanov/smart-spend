@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import { BankAccountService } from "../services/bankAccountService";
 import { Money } from "../models/money";
+import { TransactionService } from "../services/transactionService";
 
 export class BankAccountController {
   private service: BankAccountService;
+  private transactionService: TransactionService;
 
   constructor() {
     this.service = new BankAccountService();
+    this.transactionService = new TransactionService();
   }
 
   getByIBAN = async (req: Request, res: Response) => {
@@ -63,7 +66,13 @@ export class BankAccountController {
         return res.status(401).send("Unauthorized request");
       }
       const money = new Money(balance, currency, true);
-      const newCompany = await this.service.addBankAccount(companyId, name, department, IBAN, money);
+      const newCompany = await this.service.addBankAccount(
+        companyId,
+        name,
+        department,
+        IBAN,
+        money
+      );
       res.status(200).send(newCompany);
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -93,6 +102,29 @@ export class BankAccountController {
         return;
       }
       res.status(200).json({ message: "Money sent successfully" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+  getTransactions = async (req: Request, res: Response) => {
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const { IBAN } = req.params;
+      const sendStatus = await this.transactionService.getTransactions(IBAN);
+      if (!sendStatus) {
+        res.status(500).json({ message: "Error getting transactions" });
+        return;
+      }
+      res.status(200).json(sendStatus);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
