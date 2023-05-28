@@ -7,10 +7,13 @@ export interface MessageHandler {
 
 export class RabbitMQService {
   private channel: Channel | null = null;
-  private conUrl = config.rabbitMq.url;
+  private conUrl = config.rabbitMq.url
+    ? config.rabbitMq.url
+    : "amqp://rabbitmq:5672";
 
   async connect() {
     try {
+      console.log(`Connecting to ${this.conUrl} ...`);
       const conn = await connect(this.conUrl);
       this.channel = await conn.createChannel();
       console.log("Connected to RabbitMQ");
@@ -20,8 +23,13 @@ export class RabbitMQService {
   }
 
   async createQueue(queueName: string) {
-    await this.checkChannel();
-    await this.channel!.assertQueue(queueName, { durable: false });
+    try {
+      await this.checkChannel();
+      await this.channel!.assertQueue(queueName, { durable: false });
+      console.log(`Created queue ${queueName}`);
+    } catch (error) {
+      console.log("Cannot create RabbitMQ queue");
+    }
   }
 
   async sendMessage(queueName: string, message: any) {
@@ -40,6 +48,7 @@ export class RabbitMQService {
           await callback(parsedMessage);
           this.channel!.ack(message);
         } catch (error) {
+          console.log("Error consuming message", error);
           this.channel!.nack(message);
         }
       }

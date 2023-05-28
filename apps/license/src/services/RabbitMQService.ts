@@ -1,8 +1,5 @@
 import { connect, Channel } from "amqplib";
-import dotenv from "dotenv";
 import config from "../../config";
-
-dotenv.config();
 
 export interface MessageHandler {
   (message: any): Promise<void>;
@@ -10,12 +7,13 @@ export interface MessageHandler {
 
 export class RabbitMQService {
   private channel: Channel | null = null;
-  private conUrl = process.env.RabbitMQ_BASE_URL
+  private conUrl = config.rabbitMq.url
     ? config.rabbitMq.url
     : "amqp://rabbitmq:5672";
 
   async connect() {
     try {
+      console.log(`Connecting to ${this.conUrl} ...`);
       const conn = await connect(this.conUrl);
       this.channel = await conn.createChannel();
       console.log("Connected to RabbitMQ");
@@ -25,8 +23,12 @@ export class RabbitMQService {
   }
 
   async createQueue(queueName: string) {
-    await this.checkChannel();
-    await this.channel!.assertQueue(queueName, { durable: false });
+    try {
+      await this.checkChannel();
+      await this.channel!.assertQueue(queueName, { durable: false });
+    } catch (error) {
+      console.log("Cannot create RabbitMQ queue");
+    }
   }
 
   async sendMessage(queueName: string, message: any) {

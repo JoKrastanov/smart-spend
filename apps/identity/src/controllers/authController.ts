@@ -16,9 +16,11 @@ export class AuthController {
       if (!login) {
         res.status(401).send({ message: new LogInError("error").getMessage() });
       }
-      res.header("auth-token", login.token);
-      res.header("refresh-auth-token", login.refreshToken);
-      res.status(200).json(login.token);
+      res.status(200).json({
+        token: login.token,
+        refresh: login.refreshToken,
+        userId: login.user.id,
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -50,9 +52,11 @@ export class AuthController {
         department,
         accountType
       );
-      res.header("refresh-auth-token", newUser.refreshToken);
-      res.header("auth-token", newUser.token);
-      res.status(201).json(newUser.user);
+      res.status(201).json({
+        token: newUser.token,
+        refresh: newUser.refreshToken,
+        userId: newUser.user.id,
+      });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

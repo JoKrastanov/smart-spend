@@ -9,6 +9,7 @@ import { Country } from "../types/countries";
 import { RabbitMQService } from "./RabbitMQService";
 import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { AuthRepository } from "../repositories/authRepository";
+import { UserAuthResponse } from "../types/userAuthResponse";
 
 export class AuthService {
   private jwtAuth;
@@ -18,7 +19,11 @@ export class AuthService {
   constructor() {
     this.jwtAuth = JWTAuthentication();
     this.authRepository = new AuthRepository();
-    if (config.server.environment === "test") return;
+    if (
+      config.server.environment === "test" ||
+      config.server.environment === "development"
+    )
+      return;
     this.rabbitMQService = new RabbitMQService();
     this.init();
   }
@@ -28,11 +33,12 @@ export class AuthService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("users");
       this.rabbitMQService.consumeMessages("users", async (message) => {
+        console.log(message);
         await this.addUser(
           message.firstName,
           message.lastName,
           message.address,
-          message.phoneNumber,
+          message.phone,
           message.country,
           message.companyId,
           message.email,
@@ -99,26 +105,27 @@ export class AuthService {
     firstName: string,
     lastName: string,
     address: string,
-    phoneNumber: string,
+    phone: string,
     country: Country,
     companyId: string,
     email: string,
     password: string,
     department: string,
     accountType: AccountType
-  ): Promise<{ token: string; refreshToken: string; user: UserAccount }> => {
+  ): Promise<UserAuthResponse> => {
     try {
       const userExists = await this.authRepository.getByEmail(email);
       if (userExists) {
         throw new Error("This email is already in use");
       }
       const encryptedPassword = await this.encryptPassword(password);
+      const newUserId = await generateUUID();
       const newUser = new UserAccount(
-        generateUUID(),
+        newUserId,
         firstName,
         lastName,
         address,
-        phoneNumber,
+        phone,
         country,
         companyId,
         email,
@@ -127,7 +134,10 @@ export class AuthService {
         department,
         accountType
       );
-      this.authRepository.add(newUser);
+      const userResp = await this.authRepository.add(newUser);
+      if (!userResp) {
+        return null;
+      }
       return this.signAuthAndRefreshToken(newUser);
     } catch (error) {
       throw error;
@@ -137,7 +147,7 @@ export class AuthService {
   loginCheck = async (
     email: string,
     inputPassword: string
-  ): Promise<{ token: string; refreshToken: string }> => {
+  ): Promise<UserAuthResponse> => {
     try {
       const user = await this.authRepository.getByEmail(email);
       if (!user) return null;

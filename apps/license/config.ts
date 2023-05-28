@@ -13,7 +13,9 @@ const MONGO_URL = `mongodb+srv://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@${MONGO_D
 const RabbitMQ_BASE_URL = process.env.RabbitMQ_BASE_URL || "";
 const RabbitMQ_USER = process.env.RabbitMQ_USER || "";
 const RabbitMQ_PASSWORD = process.env.RabbitMQ_PASSWORD || "";
-const RabbitMQ_URL = `amqps://${RabbitMQ_USER}:${RabbitMQ_PASSWORD}@${RabbitMQ_BASE_URL}/${RabbitMQ_USER}`;
+const RabbitMQ_URL = process.env.RabbitMQ_BASE_URL
+  ? `amqps://${RabbitMQ_USER}:${RabbitMQ_PASSWORD}@${RabbitMQ_BASE_URL}/${RabbitMQ_USER}`
+  : null;
 
 export interface Config {
   mongo: {

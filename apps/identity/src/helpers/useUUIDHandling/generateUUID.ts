@@ -1,5 +1,5 @@
 import crypto from "crypto";
 
-export const generateUUID = (): string => {
-    return crypto.randomUUID();
-} 
+export const generateUUID = async (): Promise<string> => {
+  return await crypto.randomUUID();
+};

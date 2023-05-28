@@ -11,31 +11,39 @@ export class LicenseController {
   }
 
   getAllLicenses = async (req: Request, res: Response) => {
-    const { token, refresh } = req.headers;
-    if (
-      !(await this.service.verifyBearerToken(
-        token as string,
-        refresh as string
-      ))
-    ) {
-      return res.status(401).send("Unauthorized request");
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      res.status(200).json(await this.service.getAllLicenses());
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    res.status(200).json(await this.service.getAllLicenses());
   };
 
   getByCompany = async (req: Request, res: Response) => {
-    const { token, refresh } = req.headers;
-    if (
-      !(await this.service.verifyBearerToken(
-        token as string,
-        refresh as string
-      ))
-    ) {
-      return res.status(401).send("Unauthorized request");
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      res
+        .status(200)
+        .json(await this.service.getLicenseByCompany(req.params.companyId));
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    res
-      .status(200)
-      .json(await this.service.getLicenseByCompany(req.params.companyId));
   };
 
   subscribe = async (req: Request, res: Response) => {
@@ -127,7 +135,7 @@ export class LicenseController {
         department,
         accountType,
       } = req.body;
-      this.service.registerEmployee(
+      const registerStatus = this.service.registerEmployee(
         firstName,
         lastName,
         address,
@@ -139,9 +147,15 @@ export class LicenseController {
         department,
         accountType
       );
+      if (!registerStatus) {
+        res.status(403).json({
+          message:
+            "Error registering employee. Please check you license status",
+        });
+      }
       res.status(200).json({});
     } catch (error) {
-      res.status(500).json({ message: error.getMessage() });
+      res.status(500).json({ message: error });
     }
   };
 

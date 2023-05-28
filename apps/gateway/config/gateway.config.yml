@@ -24,14 +24,8 @@ serviceEndpoints:
   license:
     url: http://license-service:5000
 policies:
-  - cors
   - proxy
   - log
-  - rate-limit
-  - basic-auth
-  - oauth2
-  - key-auth
-  - expression
 pipelines:
   - name: identity
     apiEndpoints:
