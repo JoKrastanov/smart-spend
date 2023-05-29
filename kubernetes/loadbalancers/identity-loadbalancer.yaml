@@ -4,7 +4,7 @@ metadata:
   name: identity-service-deployment
   namespace: default
 spec:
-  clusterIP: 10.14.128.1
+  clusterIP: 10.14.128.2
   ports:
     - port: 80
       protocol: TCP
