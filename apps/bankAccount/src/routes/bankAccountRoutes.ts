@@ -7,6 +7,7 @@ const bankController = new BankAccountController();
 router.get("/", bankController.getAllBankAccounts);
 router.post("/", bankController.addBankAccount);
 router.get("/:IBAN", bankController.getByIBAN);
+router.get("/company/:companyId", bankController.getByCompany);
 router.post("/:IBAN/send", bankController.sendMoney);
 router.get("/transactions/:IBAN", bankController.getTransactions);
 

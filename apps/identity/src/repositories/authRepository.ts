@@ -1,4 +1,5 @@
 import { UserAccount } from "../models/userAccount";
+import { UserAccountDTO } from "../models/userAccountDTO";
 import { UserCollection } from "../schemas/profileSchema";
 import { AccountType } from "../types/accountTypes";
 import { Country } from "../types/countries";
@@ -11,6 +12,27 @@ export class AuthRepository {
   getAll = async (): Promise<UserAccount[]> => {
     try {
       return (await this.repository.find()) as UserAccount[];
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getById = async (id: string): Promise<UserAccountDTO> => {
+    try {
+      const user = await this.repository.findOne({ id: id });
+      return user
+        ? new UserAccountDTO(
+            user.firstName,
+            user.lastName,
+            user.address,
+            Country[user.country],
+            user.phone,
+            user.email,
+            user.companyId,
+            user.department,
+            AccountType[user.accountType]
+          )
+        : null;
     } catch (error) {
       throw error;
     }

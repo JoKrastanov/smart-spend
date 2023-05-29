@@ -14,7 +14,7 @@ spec:
     - nodePort: 31480
       port: 80
       protocol: TCP
-      targetPort: 6000
+      targetPort: 6001
   selector:
     app: bank-service
   sessionAffinity: None

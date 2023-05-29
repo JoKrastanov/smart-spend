@@ -5,7 +5,7 @@ dotenv.config();
 
 // DECLARE ALL VARIABLES
 const NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : "development";
-const SERVER_PORT = process.env.PORT ? Number(process.env.PORT) : 6000;
+const SERVER_PORT = process.env.PORT ? Number(process.env.PORT) : 6001;
 
 const MONGO_DB_USER = process.env.MONGO_DB_USER || "";
 const MONGO_DB_PASSWORD = process.env.MONGO_DB_PASSWORD || "";

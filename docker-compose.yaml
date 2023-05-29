@@ -56,7 +56,7 @@ services:
         build:
             context: ./apps/bankAccount
         ports:
-            - "6000:6000"
+            - "6001:6001"
         networks:
             - mynetwork
     api-gateway:

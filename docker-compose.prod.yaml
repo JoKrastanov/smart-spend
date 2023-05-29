@@ -1,0 +1,54 @@
+version: "3"
+services:
+  identity-service:
+    image: identity-service
+    container_name: identity-service-container
+    hostname: identity-service
+    env_file:
+      - ./apps/identity/.env.prod
+    build:
+      context: ./apps/identity
+    ports:
+      - "4000:4000"
+    networks:
+      - mynetwork
+  license-service:
+    image: license-service
+    hostname: license-service
+    container_name: license-service-container
+    env_file:
+      - ./apps/license/.env.prod
+    build:
+      context: ./apps/license
+    ports:
+      - "5000:5000"
+    networks:
+      - mynetwork
+  bankaccount-service:
+    image: bankaccount-service
+    hostname: bankaccount-service
+    container_name: bankaccount-service-container
+    env_file:
+      - ./apps/bankAccount/.env.prod
+    build:
+      context: ./apps/bankAccount
+    ports:
+      - "6001:6001"
+    networks:
+      - mynetwork
+  api-gateway:
+    container_name: api-gateway-container
+    image: api-gateway
+    build: ./apps/gateway
+    ports:
+      - 8080:8080
+      - 9876:9876
+    depends_on:
+      - identity-service
+      - bankaccount-service
+      - license-service
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+    driver: bridge

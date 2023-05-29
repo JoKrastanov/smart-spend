@@ -133,6 +133,37 @@ export class BankAccountService {
     }
   };
 
+  getByCompany = async (companyId: String): Promise<BankAccount[]> => {
+    try {
+      const bankAccountsToReturn = [];
+      const bankAccounts = await this.bankAccountRepository.getByCompany(
+        companyId
+      );
+      if (!bankAccounts) {
+        return [];
+      }
+      bankAccounts.forEach((bankAccount: any) => {
+        bankAccountsToReturn.push(
+          new BankAccount(
+            bankAccount.id,
+            bankAccount.companyId,
+            bankAccount.name,
+            bankAccount.department,
+            bankAccount.IBAN,
+            new Money(
+              bankAccount.balance.amount,
+              bankAccount.balance.currency,
+              false
+            )
+          )
+        );
+      });
+      return bankAccountsToReturn;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   createTransaction = async (newTransaction: Transaction) => {
     try {
       return await this.transactionService.addTransaction(newTransaction);

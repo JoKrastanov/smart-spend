@@ -41,6 +41,17 @@ export class BankAccountRepository {
     }
   };
 
+  getByCompany = async (companyId: String): Promise<Object[]> => {
+    try {
+      const fetchedBankAccounts = await this.repository.find({
+        companyId: companyId,
+      });
+      return fetchedBankAccounts;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   add = async (bankAccount: BankAccount) => {
     try {
       const newBankAccount = new this.repository({

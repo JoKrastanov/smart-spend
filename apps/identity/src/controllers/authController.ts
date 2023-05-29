@@ -75,4 +75,24 @@ export class AuthController {
       res.status(400).send("Invalid Token");
     }
   };
+
+  getUser = async (req: Request, res: Response) => {
+    try {
+      const { token, refresh } = req.headers;
+      if (!token)
+        return res.status(401).send("Access Denied / Unauthorized request");
+      if (!(await this.service.verifyBearerToken(token, refresh))) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const { userId } = req.params;
+      const user = await this.service.getUser(userId);
+      if (!user) {
+        res.status(404).send({ message: "User not found" });
+      }
+      res.status(200).send(user);
+    } catch (error) {
+      console.log(error);
+      res.status(400).send("Error fetching user data");
+    }
+  };
 }

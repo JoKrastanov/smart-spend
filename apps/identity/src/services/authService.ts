@@ -10,6 +10,7 @@ import { RabbitMQService } from "./RabbitMQService";
 import { generateUUID } from "../helpers/useUUIDHandling/generateUUID";
 import { AuthRepository } from "../repositories/authRepository";
 import { UserAuthResponse } from "../types/userAuthResponse";
+import { UserAccountDTO } from "../models/userAccountDTO";
 
 export class AuthService {
   private jwtAuth;
@@ -98,6 +99,15 @@ export class AuthService {
       return await this.authRepository.getAll();
     } catch (error) {
       return [];
+    }
+  };
+
+  getUser = async (id: string): Promise<UserAccountDTO> => {
+    try {
+      const user = await this.authRepository.getById(id);
+      return user;
+    } catch (error) {
+      console.log(error);
     }
   };
 

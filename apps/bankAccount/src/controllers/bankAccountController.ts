@@ -35,6 +35,29 @@ export class BankAccountController {
     }
   };
 
+  getByCompany = async (req: Request, res: Response) => {
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const { companyId } = req.params;
+      const bankAccounts = await this.service.getByCompany(companyId);
+      if (!bankAccounts) {
+        res.status(404).json({ message: "No bank accounts found." });
+        return;
+      }
+      res.status(200).send(bankAccounts);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
   getAllBankAccounts = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
