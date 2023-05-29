@@ -1,21 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    cloud.google.com/neg: '{"ingress": true}'
-  name: bank-service-deployment-wr7dj
+  name: bank-service-deployment
   namespace: default
 spec:
-  allocateLoadBalancerNodePorts: true
-  clusterIP: 10.100.128.10
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
+  clusterIP: 10.14.128.3
   ports:
-    - nodePort: 31480
-      port: 80
+    - port: 80
       protocol: TCP
       targetPort: 6001
   selector:
-    app: bank-service
-  sessionAffinity: None
+    app: identity-service
   type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+      - ip: 34.90.128.81
