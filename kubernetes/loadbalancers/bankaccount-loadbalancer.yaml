@@ -8,7 +8,7 @@ spec:
   ports:
     - port: 80
       protocol: TCP
-      targetPort: 6001
+      targetPort: 6000
   selector:
     app: identity-service
   type: LoadBalancer

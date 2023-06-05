@@ -18,7 +18,7 @@ spec:
         - name: bankaccount-service-container
           image: europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
           ports:
-            - containerPort: 6001
+            - containerPort: 6000
           envFrom:
             - secretRef:
                 name: cross-service-secrets
