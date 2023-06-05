@@ -26,11 +26,9 @@ spec:
                 name: bank-service-secrets
           resources:
             cpu: 500m
-            ephemeral-storage: 1Gi
             memory: 2Gi
           requests:
             cpu: 500m
-            ephemeral-storage: 1Gi
             memory: 2Gi
 ---
 apiVersion: autoscaling/v2
