@@ -25,10 +25,10 @@ spec:
             - secretRef:
                 name: bank-service-secrets
           resources:
-            cpu: "500m"
+            cpu: 0.5
             memory: "2Gi"
           requests:
-            cpu: "500m"
+            cpu: 0.5
             memory: "2Gi"
 ---
 apiVersion: autoscaling/v2
