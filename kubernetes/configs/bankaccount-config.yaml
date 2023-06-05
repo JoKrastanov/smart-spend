@@ -25,11 +25,11 @@ spec:
             - secretRef:
                 name: bank-service-secrets
           resources:
-            cpu: 500m
-            memory: 2Gi
+            cpu: "500m"
+            memory: "2Gi"
           requests:
-            cpu: 500m
-            memory: 2Gi
+            cpu: "500m"
+            memory: "2Gi"
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
