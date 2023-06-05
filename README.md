@@ -10,4 +10,4 @@ for rabbit mq run: <br />
 This will run an instance of Rabbit MQ. The management UI can be accessed using the port 15672 <br />
 We use the amqplib library on port 5672 to communicate with the server itself
 
-In order to run all the services at once run `docker-compose up` at the root of the project
+In order to run all the services at once run `docker-compose up` at the root of the project.
