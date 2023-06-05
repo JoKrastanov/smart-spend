@@ -1,6 +1,7 @@
 name: Deploy GKE
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
 
