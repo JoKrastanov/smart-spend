@@ -85,4 +85,4 @@ jobs:
           gcloud components install kubectl
           gcloud container clusters get-credentials smartspend --zone europe-west4
           cd kubernetes
-          kubectl apply -f secrets/shared-secrets.yaml -f secrets/bank-service-secrets.yaml -f configs/bankaccount-config.yaml -f loadbalancers/identity-loadbalancer.yaml
+          kubectl apply -f secrets/shared-secrets.yaml -f secrets/bank-service-secrets.yaml -f configs/bankaccount-config.yaml -f loadbalancers/bankaccount-loadbalancer.yaml
