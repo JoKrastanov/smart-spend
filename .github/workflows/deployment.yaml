@@ -86,3 +86,34 @@ jobs:
           gcloud container clusters get-credentials smartspend --zone europe-west4
           cd kubernetes
           kubectl apply -f secrets/shared-secrets.yaml -f secrets/bank-service-secrets.yaml -f configs/bankaccount-config.yaml -f loadbalancers/bankaccount-loadbalancer.yaml
+
+  deploy-license:
+    needs: create-cluster
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to Docker
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.4.0
+        with:
+          project_id: smartspend
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and Push docker image
+        run: |
+          cd apps/license
+          gcloud auth configure-docker europe-west4-docker.pkg.dev
+          docker build -t europe-west4-docker.pkg.dev/smartspend/smart-spend/license:latest -f Dockerfile .
+          docker push europe-west4-docker.pkg.dev/smartspend/smart-spend/license:latest
+
+      - name: Upload Kubernetes config
+        run: |
+          gcloud components install kubectl
+          gcloud container clusters get-credentials smartspend --zone europe-west4
+          cd kubernetes
+          kubectl apply -f secrets/shared-secrets.yaml -f configs/license-config.yaml -f loadbalancers/license-loadbalancer.yaml
