@@ -28,7 +28,12 @@ export class BankAccountService {
     try {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("bank-accounts");
+      await this.rabbitMQService.createQueue("delete-bankaccounts");
+      this.rabbitMQService.consumeMessages("delete-bankaccounts", async (message) => {
+        await this.deleteBankAccounts(message.companyId);
+      });
       this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
+        console.log("Adding new bank account", message)
         const bankBalance = new Money(message.balance, message.currency, true);
         await this.addBankAccount(
           message.companyId,
@@ -169,6 +174,14 @@ export class BankAccountService {
       return await this.transactionService.addTransaction(newTransaction);
     } catch (error) {
       throw error;
+    }
+  };
+
+  deleteBankAccounts = async (companyId: string) => {
+    try {
+      await this.bankAccountRepository.deleteCompanyBankAccounts(companyId);
+    } catch (error) {
+      console.log(error);
     }
   };
 }

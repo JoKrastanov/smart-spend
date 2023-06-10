@@ -8,7 +8,7 @@ spec:
   ports:
     - port: 80
       protocol: TCP
-      targetPort: 6000
+      targetPort: 6001
   selector:
     app: bankaccount-service
   type: LoadBalancer

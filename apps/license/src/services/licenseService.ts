@@ -190,4 +190,12 @@ export class LicenseService {
       return console.log(error);
     }
   };
+
+  deleteLicense = async (companyId: string) => {
+    try {
+      return await this.licenseRepository.delete(companyId);
+    } catch (error) {
+      return false;
+    }
+  };
 }

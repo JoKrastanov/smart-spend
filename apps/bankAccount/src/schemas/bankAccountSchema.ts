@@ -34,6 +34,7 @@ const bankAccountSchema = new Schema({
 });
 
 bankAccountSchema.index({ IBAN: 1 })
+bankAccountSchema.index({ companyId: 1 })
 
 export const BankAccountCollection = mongoose.model(
   "BankAccounts",

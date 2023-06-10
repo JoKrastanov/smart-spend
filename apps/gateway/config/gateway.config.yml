@@ -20,7 +20,7 @@ serviceEndpoints:
   identity:
     url: http://identity-service:4000
   bankAccount:
-    url: http://bankaccount-service:6000
+    url: http://bankaccount-service:6001
   license:
     url: http://license-service:5000
 policies:

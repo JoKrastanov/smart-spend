@@ -100,4 +100,12 @@ export class LicenseRepository {
       throw error;
     }
   };
+
+  delete = async (companyId: string) => {
+    try {
+      return await this.repository.deleteOne({ companyId: companyId });
+    } catch (error) {
+      return false;
+    }
+  };
 }

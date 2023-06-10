@@ -5,15 +5,33 @@ import { generateUUID } from "../helpers/generateUUID";
 import { Company } from "../models/company";
 import { Country } from "../types/countries";
 import { CompanyRepository } from "../repositories/companyRepository";
+import { RabbitMQService } from "./RabbitMQService";
+import { LicenseService } from "./licenseService";
+import { LicenseRepository } from "../repositories/licenseRepository";
 
 export class CompanyService {
   private jwtAuth;
+  private licenseRepository: LicenseRepository;
   private comapnyRepository: CompanyRepository;
+  private rabbitMQService: RabbitMQService;
 
   constructor() {
     this.jwtAuth = JWTAuthentication();
     this.comapnyRepository = new CompanyRepository();
+    this.licenseRepository = new LicenseRepository();
+    if (config.server.environment === "test") return;
+    this.rabbitMQService = new RabbitMQService();
+    this.init();
   }
+
+  private init = async () => {
+    try {
+      await this.rabbitMQService.connect();
+      await this.rabbitMQService.createQueue("delete-company");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   verifyBearerToken = async (
     authorization: string | string[],
@@ -54,10 +72,36 @@ export class CompanyService {
   };
 
   getCompanies = async () => {
-    return await this.comapnyRepository.getAll();
+    try {
+      return await this.comapnyRepository.getAll();
+    } catch (error) {
+      return null;
+    }
   };
 
   getCompany = async (id: string) => {
-    return await this.comapnyRepository.getById(id);
+    try {
+      return await this.comapnyRepository.getById(id);
+    } catch (error) {
+      return null;
+    }
+  };
+
+  deleteCompany = async (id: string) => {
+    try {
+      const companyToDelete = await this.comapnyRepository.getById(id);
+      if (!companyToDelete) {
+        return false;
+      }
+      await this.licenseRepository.delete(id);
+      this.rabbitMQService.sendMessage("delete-accounts", { companyId: id });
+      this.rabbitMQService.sendMessage("delete-bankaccounts", {
+        companyId: id,
+      });
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 }

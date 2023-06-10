@@ -55,7 +55,11 @@ export class CompanyController {
         return res.status(401).send("Unauthorized request");
       }
       const { name, country, address } = req.body;
-      const newCompany = await this.service.registerCompany(name, country, address);
+      const newCompany = await this.service.registerCompany(
+        name,
+        country,
+        address
+      );
       if (!newCompany) {
         res
           .status(404)
@@ -63,6 +67,29 @@ export class CompanyController {
         return;
       }
       res.status(201).send(newCompany);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+  deleteCompany = async (req: Request, res: Response) => {
+    try {
+      const { token, refresh } = req.headers;
+      if (
+        !(await this.service.verifyBearerToken(
+          token as string,
+          refresh as string
+        ))
+      ) {
+        return res.status(401).send("Unauthorized request");
+      }
+      const { id } = req.params;
+      const deleteStatus = await this.service.deleteCompany(id);
+      if (!deleteStatus) {
+        res.status(404).send({ message: "Error deleting company" });
+        return;
+      }
+      res.status(200).send(deleteStatus);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

@@ -7,5 +7,6 @@ const companyController = new CompanyController();
 router.post("/register", companyController.registerCompany);
 router.get("/companies", companyController.getAllCompanies);
 router.get("/:id", companyController.getCompany);
+router.delete("/:id", companyController.deleteCompany);
 
 export { router as companyRouter };

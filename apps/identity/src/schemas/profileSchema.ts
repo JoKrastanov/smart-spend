@@ -52,5 +52,6 @@ const userSchema = new Schema({
 });
 
 userSchema.index({ email: 1 });
+userSchema.index({ companyId: 1 });
 
 export const UserCollection = mongoose.model("Users", userSchema);

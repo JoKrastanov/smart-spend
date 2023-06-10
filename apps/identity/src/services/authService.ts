@@ -33,6 +33,10 @@ export class AuthService {
     try {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("users");
+      await this.rabbitMQService.createQueue("delete-accounts");
+      this.rabbitMQService.consumeMessages("delete-accounts", async (message) => {
+        await this.deleteAccounts(message.companyId);
+      });
       this.rabbitMQService.consumeMessages("users", async (message) => {
         console.log(message);
         await this.addUser(
@@ -169,6 +173,14 @@ export class AuthService {
       return this.signAuthAndRefreshToken(user);
     } catch (error) {
       throw new Error(error);
+    }
+  };
+
+  deleteAccounts = async (companyId: string) => {
+    try {
+      await this.authRepository.deleteCompanyAccounts(companyId);
+    } catch (error) {
+      console.log(error);
     }
   };
 }

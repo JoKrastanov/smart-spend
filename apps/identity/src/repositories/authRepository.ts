@@ -88,4 +88,8 @@ export class AuthRepository {
       throw error;
     }
   };
+
+  deleteCompanyAccounts = async (companyId: string) => {
+    await this.repository.deleteMany({ companyId: companyId });
+  };
 }

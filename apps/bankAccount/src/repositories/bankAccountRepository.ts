@@ -94,4 +94,8 @@ export class BankAccountRepository {
       throw error;
     }
   };
+
+  deleteCompanyBankAccounts = async (companyId: string) => {
+    await this.repository.deleteMany({ companyId: companyId });
+  };
 }

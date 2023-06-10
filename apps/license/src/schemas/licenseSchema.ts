@@ -64,6 +64,7 @@ const licenseSchema = new Schema({
   },
 });
 
+licenseSchema.index({ id: 1 })
 licenseSchema.index({ companyId: 1 });
 
 export const LicenseCollection = mongoose.model("Licenses", licenseSchema);
