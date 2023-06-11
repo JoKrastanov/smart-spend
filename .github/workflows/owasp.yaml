@@ -1,0 +1,10 @@
+name: Run OWASP Scan
+
+on:
+  workflow_dispatch:
+jobs:
+  run-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ZAP Scan
+        run: docker run -t owasp/zap2docker-stable zap-baseline.py -t https://smart-spend-vue.vercel.app/
