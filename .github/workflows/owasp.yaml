@@ -12,4 +12,4 @@ jobs:
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.3.0
         with:
-          target: 'https://smart-spend-vue.vercel.app/'
+          target: 'http://34.91.83.144/'
