@@ -3,10 +3,8 @@ name: Run OWASP Scan
 on:
   workflow_dispatch:
 jobs:
-  scan-bank:
+  run-scan:
     runs-on: ubuntu-latest
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.4.0
-        with:
-          target: 'http://34.91.223.56'
+        run: docker run -t owasp/zap2docker-stable zap-baseline.py -t https://smart-spend-vue.vercel.app/
