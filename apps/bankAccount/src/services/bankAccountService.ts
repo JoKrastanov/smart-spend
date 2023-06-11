@@ -138,11 +138,51 @@ export class BankAccountService {
     }
   };
 
+  userIsAdmin = async (token: String) => {
+    try {
+      return await this.jwtAuth.userIsAdmin(token); 
+    } catch (error) {
+      return false
+    }
+  }
+
   getByCompany = async (companyId: String): Promise<BankAccount[]> => {
     try {
       const bankAccountsToReturn = [];
       const bankAccounts = await this.bankAccountRepository.getByCompany(
         companyId
+      );
+      if (!bankAccounts) {
+        return [];
+      }
+      bankAccounts.forEach((bankAccount: any) => {
+        bankAccountsToReturn.push(
+          new BankAccount(
+            bankAccount.id,
+            bankAccount.companyId,
+            bankAccount.name,
+            bankAccount.department,
+            bankAccount.IBAN,
+            new Money(
+              bankAccount.balance.amount,
+              bankAccount.balance.currency,
+              false
+            )
+          )
+        );
+      });
+      return bankAccountsToReturn;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getByCompanyAndDepartment = async (companyId: String, department: String): Promise<BankAccount[]> => {
+    try {
+      const bankAccountsToReturn = [];
+      const bankAccounts = await this.bankAccountRepository.getByCompanyAndDepartment(
+        companyId,
+        department
       );
       if (!bankAccounts) {
         return [];
