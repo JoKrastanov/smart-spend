@@ -15,7 +15,7 @@ export class BankAccountController {
   getByIBAN = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const { IBAN } = req.params;
@@ -33,7 +33,7 @@ export class BankAccountController {
   getByCompany = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const { companyId } = req.params;
@@ -51,7 +51,7 @@ export class BankAccountController {
   getByCompanyAndDepartment = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const { companyId, department } = req.params;
@@ -73,7 +73,7 @@ export class BankAccountController {
   getAllBankAccounts = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const companies = await this.service.getBankAccounts();
@@ -87,7 +87,7 @@ export class BankAccountController {
     try {
       const { token, refresh } = req.headers;
       const { companyId, name, department, IBAN, balance, currency } = req.body;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const money = new Money(balance, currency, true);
@@ -107,7 +107,7 @@ export class BankAccountController {
   sendMoney = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const { IBAN } = req.params;
@@ -130,7 +130,7 @@ export class BankAccountController {
   getTransactions = async (req: Request, res: Response) => {
     try {
       const { token, refresh } = req.headers;
-      if (!(await this.service.verifyBearerToken(token, refresh))) {
+      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
       const { IBAN } = req.params;
