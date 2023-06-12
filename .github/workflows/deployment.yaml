@@ -3,7 +3,7 @@ name: Deploy GKE
 on:
   workflow_dispatch:
   push:
-    branches: [main, fix-build-pipeline]
+    branches: [main]
 
 jobs:
   create-cluster:
