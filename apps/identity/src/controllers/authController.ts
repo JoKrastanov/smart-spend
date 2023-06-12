@@ -64,7 +64,7 @@ export class AuthController {
 
   freeMoney = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!token)
         return res.status(401).send("Access Denied / Unauthorized request");
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
@@ -78,7 +78,7 @@ export class AuthController {
 
   getUser = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!token)
         return res.status(401).send("Access Denied / Unauthorized request");
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {

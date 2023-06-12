@@ -10,7 +10,7 @@ export class CompanyController {
   }
 
   getAllCompanies = async (req: Request, res: Response) => {
-    const { token, refresh } = req.headers;
+    const { token, refresh } = req.headers as { token: string, refresh: string };
     if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
       return res.status(401).send("Unauthorized request");
     }
@@ -18,7 +18,7 @@ export class CompanyController {
   };
 
   getCompany = async (req: Request, res: Response) => {
-    const { token, refresh } = req.headers;
+    const { token, refresh } = req.headers as { token: string, refresh: string };
     if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
       return res.status(401).send("Unauthorized request");
     }
@@ -35,7 +35,7 @@ export class CompanyController {
 
   registerCompany = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
@@ -59,7 +59,7 @@ export class CompanyController {
 
   deleteCompany = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }

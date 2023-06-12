@@ -12,7 +12,7 @@ export class LicenseController {
 
   getAllLicenses = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
@@ -24,7 +24,7 @@ export class LicenseController {
 
   getByCompany = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
@@ -38,7 +38,7 @@ export class LicenseController {
 
   subscribe = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       const { companyId } = req.params;
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
@@ -77,7 +77,7 @@ export class LicenseController {
 
   activate = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
@@ -94,7 +94,7 @@ export class LicenseController {
 
   registerEmployee = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
@@ -136,7 +136,7 @@ export class LicenseController {
 
   registerBankAccount = async (req: Request, res: Response) => {
     try {
-      const { token, refresh } = req.headers;
+      const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
         return res.status(401).send("Unauthorized request");
       }
