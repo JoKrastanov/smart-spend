@@ -24,7 +24,9 @@ export class LicenseService {
     this.companyService = new CompanyService();
     if (config.server.environment === "test") return;
     this.rabbitMQService = new RabbitMQService();
-    this.init().catch((err) => console.log("Error connecting to message broker", err));
+    this.init().catch((err) =>
+      console.log("Error connecting to message broker", err)
+    );
   }
 
   private init = async () => {

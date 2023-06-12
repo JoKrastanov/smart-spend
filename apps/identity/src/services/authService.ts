@@ -26,7 +26,9 @@ export class AuthService {
     )
       return;
     this.rabbitMQService = new RabbitMQService();
-    this.init().catch((err) => console.log("Error connecting to message broker", err));
+    this.init().catch((err) =>
+      console.log("Error connecting to message broker", err)
+    );
   }
 
   private init = async () => {
@@ -34,9 +36,12 @@ export class AuthService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("users");
       await this.rabbitMQService.createQueue("delete-accounts");
-      await this.rabbitMQService.consumeMessages("delete-accounts", async (message) => {
-        await this.deleteAccounts(message.companyId);
-      });
+      await this.rabbitMQService.consumeMessages(
+        "delete-accounts",
+        async (message) => {
+          await this.deleteAccounts(message.companyId);
+        }
+      );
       await this.rabbitMQService.consumeMessages("users", async (message) => {
         console.log(message);
         await this.addUser(
