@@ -21,7 +21,7 @@ export class CompanyService {
     this.licenseRepository = new LicenseRepository();
     if (config.server.environment === "test") return;
     this.rabbitMQService = new RabbitMQService();
-    this.init();
+    this.init().catch((err) => console.log("Error connecting to message broker", err));
   }
 
   private init = async () => {
@@ -67,6 +67,7 @@ export class CompanyService {
       newCompany = await this.comapnyRepository.add(newCompany);
       return newCompany;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -94,8 +95,8 @@ export class CompanyService {
         return false;
       }
       await this.licenseRepository.delete(id);
-      this.rabbitMQService.sendMessage("delete-accounts", { companyId: id });
-      this.rabbitMQService.sendMessage("delete-bankaccounts", {
+      await this.rabbitMQService.sendMessage("delete-accounts", { companyId: id });
+      await this.rabbitMQService.sendMessage("delete-bankaccounts", {
         companyId: id,
       });
       return true;

@@ -58,6 +58,7 @@ export class BankAccount {
       this.balance.subtract(money.amount);
       return true;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -77,6 +78,7 @@ export class BankAccount {
       this.balance.add(money.amount);
       return true;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };

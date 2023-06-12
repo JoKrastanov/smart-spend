@@ -21,7 +21,7 @@ export class BankAccountService {
     this.jwtAuth = JWTAuthentication();
     if (config.server.environment === "test") return;
     this.rabbitMQService = new RabbitMQService();
-    this.init();
+    this.init().catch((err) => console.log("Error connecting to message broker", err));
   }
 
   private init = async () => {
@@ -29,10 +29,10 @@ export class BankAccountService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("bank-accounts");
       await this.rabbitMQService.createQueue("delete-bankaccounts");
-      this.rabbitMQService.consumeMessages("delete-bankaccounts", async (message) => {
+      await this.rabbitMQService.consumeMessages("delete-bankaccounts", async (message) => {
         await this.deleteBankAccounts(message.companyId);
       });
-      this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
+      await this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
         console.log("Adding new bank account", message)
         const bankBalance = new Money(message.balance, message.currency, true);
         await this.addBankAccount(
@@ -70,6 +70,7 @@ export class BankAccountService {
     try {
       return await this.bankAccountRepository.getAll();
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -79,6 +80,7 @@ export class BankAccountService {
       const bankAccount = await this.bankAccountRepository.getByIBAN(IBAN);
       return bankAccount;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -138,7 +140,7 @@ export class BankAccountService {
     }
   };
 
-  userIsAdmin = async (token: String) => {
+  userIsAdmin = async (token: string) => {
     try {
       return await this.jwtAuth.userIsAdmin(token); 
     } catch (error) {
@@ -146,7 +148,7 @@ export class BankAccountService {
     }
   }
 
-  getByCompany = async (companyId: String): Promise<BankAccount[]> => {
+  getByCompany = async (companyId: string): Promise<BankAccount[]> => {
     try {
       const bankAccountsToReturn = [];
       const bankAccounts = await this.bankAccountRepository.getByCompany(
@@ -173,11 +175,12 @@ export class BankAccountService {
       });
       return bankAccountsToReturn;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
 
-  getByCompanyAndDepartment = async (companyId: String, department: String): Promise<BankAccount[]> => {
+  getByCompanyAndDepartment = async (companyId: string, department: string): Promise<BankAccount[]> => {
     try {
       const bankAccountsToReturn = [];
       const bankAccounts = await this.bankAccountRepository.getByCompanyAndDepartment(
@@ -205,6 +208,7 @@ export class BankAccountService {
       });
       return bankAccountsToReturn;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -213,6 +217,7 @@ export class BankAccountService {
     try {
       return await this.transactionService.addTransaction(newTransaction);
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };

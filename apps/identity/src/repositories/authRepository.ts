@@ -7,7 +7,9 @@ import { Country } from "../types/countries";
 export class AuthRepository {
   private repository = UserCollection;
 
-  constructor() {}
+  constructor() {
+    console.log("Initializing auth repository");
+  }
 
   getAll = async (): Promise<UserAccount[]> => {
     try {
@@ -38,7 +40,7 @@ export class AuthRepository {
     }
   };
 
-  getByEmail = async (email: String): Promise<UserAccount> => {
+  getByEmail = async (email: string): Promise<UserAccount> => {
     try {
       const fetchedUser = await this.repository.findOne({ email: email });
       if (!fetchedUser) {

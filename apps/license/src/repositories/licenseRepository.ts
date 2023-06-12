@@ -7,7 +7,9 @@ import { LicenseTypes } from "../types/licenseTypes";
 export class LicenseRepository {
   private repository = LicenseCollection;
 
-  constructor() {}
+  constructor() {
+    console.log("Initializing license repository");
+  }
 
   getAll = async (): Promise<License[]> => {
     try {
@@ -17,7 +19,7 @@ export class LicenseRepository {
     }
   };
 
-  getById = async (id: String): Promise<License> => {
+  getById = async (id: string): Promise<License> => {
     try {
       const fetchedLicense = await this.repository.findOne({ companyId: id });
       if (!fetchedLicense) {

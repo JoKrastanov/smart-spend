@@ -25,8 +25,7 @@ export class RabbitMQService {
   async createQueue(queueName: string) {
     try {
       await this.checkChannel();
-      await this.channel!.assertQueue(queueName, { durable: false });
-      console.log(`Created queue ${queueName}`);
+      await this.channel.assertQueue(queueName, { durable: false });
     } catch (error) {
       console.log("Cannot create RabbitMQ queue");
     }
@@ -35,21 +34,20 @@ export class RabbitMQService {
   async sendMessage(queueName: string, message: any) {
     await this.checkChannel();
     const buffer = Buffer.from(JSON.stringify(message));
-    await this.channel!.sendToQueue(queueName, buffer);
+    await this.channel.sendToQueue(queueName, buffer);
   }
 
   async consumeMessages(queueName: string, callback: MessageHandler) {
     await this.checkChannel();
-    await this.channel!.consume(queueName, async (message) => {
+    await this.channel.consume(queueName, async (message) => {
       if (message !== null) {
         try {
           const messageContent = message.content.toString();
           const parsedMessage = JSON.parse(messageContent);
           await callback(parsedMessage);
-          this.channel!.ack(message);
+          this.channel.ack(message);
         } catch (error) {
-          console.log("Error consuming message", error);
-          this.channel!.nack(message);
+          this.channel.nack(message);
         }
       }
     });

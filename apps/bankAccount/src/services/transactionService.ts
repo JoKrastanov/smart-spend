@@ -8,9 +8,9 @@ export class TransactionService {
     this.transactionRepository = new TransactionRepository();
   }
 
-  addTransaction = (newTransaction: Transaction) => {
+  addTransaction = async (newTransaction: Transaction) => {
     try {
-      return this.transactionRepository.addTransaction(
+      return await this.transactionRepository.addTransaction(
         newTransaction.sender,
         newTransaction.receiver,
         newTransaction.amount,

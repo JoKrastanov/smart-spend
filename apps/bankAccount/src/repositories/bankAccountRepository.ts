@@ -6,7 +6,9 @@ import { CurrencyCode } from "../types/currencies";
 export class BankAccountRepository {
   private repository = BankAccountCollection;
 
-  constructor() {}
+  constructor() {
+    console.log("Initializing bank repository");
+  }
 
   getAll = async (): Promise<BankAccount[]> => {
     try {
@@ -16,7 +18,7 @@ export class BankAccountRepository {
     }
   };
 
-  getByIBAN = async (IBAN: String): Promise<BankAccount> => {
+  getByIBAN = async (IBAN: string): Promise<BankAccount> => {
     try {
       const fetchedBankAccount = await this.repository.findOne({
         IBAN: IBAN,
@@ -41,7 +43,7 @@ export class BankAccountRepository {
     }
   };
 
-  getByCompany = async (companyId: String): Promise<Object[]> => {
+  getByCompany = async (companyId: string): Promise<Object[]> => {
     try {
       const fetchedBankAccounts = await this.repository.find({
         companyId: companyId,
@@ -52,7 +54,7 @@ export class BankAccountRepository {
     }
   };
 
-  getByCompanyAndDepartment = async (companyId: String, department: String): Promise<Object[]> => {
+  getByCompanyAndDepartment = async (companyId: string, department: string): Promise<Object[]> => {
     try {
       const fetchedBankAccounts = await this.repository.find({
         companyId: companyId,

@@ -1,14 +1,14 @@
 import { CurrencyCode } from "../types/currencies";
 
 export class Transaction {
-  sender: String;
-  receiver: String;
+  sender: string;
+  receiver: string;
   amount: number;
   currency: CurrencyCode;
 
   constructor(
-    sender: String,
-    receiver: String,
+    sender: string,
+    receiver: string,
     amount: number,
     currency: CurrencyCode
   ) {

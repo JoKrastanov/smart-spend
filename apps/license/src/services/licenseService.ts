@@ -24,7 +24,7 @@ export class LicenseService {
     this.companyService = new CompanyService();
     if (config.server.environment === "test") return;
     this.rabbitMQService = new RabbitMQService();
-    this.init();
+    this.init().catch((err) => console.log("Error connecting to message broker", err));
   }
 
   private init = async () => {
@@ -63,6 +63,7 @@ export class LicenseService {
     try {
       return await this.licenseRepository.getById(companyId);
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -108,6 +109,7 @@ export class LicenseService {
       license = await this.licenseRepository.add(license);
       return license;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -122,6 +124,7 @@ export class LicenseService {
       license = await this.licenseRepository.update(license);
       return license;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -151,6 +154,7 @@ export class LicenseService {
       await this.licenseRepository.update(license);
       return true;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
@@ -186,8 +190,10 @@ export class LicenseService {
       });
       license.registerEmployee();
       await this.licenseRepository.update(license);
+      return true;
     } catch (error) {
-      return console.log(error);
+      console.log(error);
+      return false;
     }
   };
 

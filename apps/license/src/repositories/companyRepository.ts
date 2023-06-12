@@ -5,7 +5,9 @@ import { Country } from "../types/countries";
 export class CompanyRepository {
   private repository = CompanyCollection;
 
-  constructor() {}
+  constructor() {
+    console.log("Initializing company repository");
+  }
 
   getAll = async (): Promise<Company[]> => {
     try {
@@ -15,7 +17,7 @@ export class CompanyRepository {
     }
   };
 
-  getById = async (id: String): Promise<Company> => {
+  getById = async (id: string): Promise<Company> => {
     try {
       const fetchedCompany = (await this.repository.findOne({
         id: id,

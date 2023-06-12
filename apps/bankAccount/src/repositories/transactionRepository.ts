@@ -3,11 +3,14 @@ import config from "../../config";
 import { CurrencyCode } from "../types/currencies";
 
 export class TransactionRepository {
-  constructor() {}
+
+  constructor() {
+    console.log("Initializing transaction repository");
+  }
 
   addTransaction = async (
-    senderIBAN: String,
-    receiverIBAN: String,
+    senderIBAN: string,
+    receiverIBAN: string,
     amount: Number,
     currency: CurrencyCode
   ) => {

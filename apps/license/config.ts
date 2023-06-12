@@ -44,14 +44,5 @@ const config: Config = {
   },
 };
 
-// //CHECK FOR ENVIRONMENT
-// if (NODE_ENV === 'production') {
-//     config.mongo.url = MONGO_URL;
-//     config.server.port = SERVER_PORT;
-// } else if (NODE_ENV === 'local') {
-//     config.mongo.url = MONGO_URL_LOCAL;
-//     config.server.port = SERVER_PORT;
-// }
-
 //EXPORT
 export default config;
