@@ -11,7 +11,7 @@ export class CompanyController {
 
   getAllCompanies = async (req: Request, res: Response) => {
     const { token, refresh } = req.headers as { token: string, refresh: string };
-    if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
+    if (!(await this.service.verifyBearerToken(token, refresh))) {
       return res.status(401).send("Unauthorized request");
     }
     res.status(200).send(await this.service.getCompanies());
