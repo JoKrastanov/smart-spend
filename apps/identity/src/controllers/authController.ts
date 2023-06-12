@@ -67,7 +67,7 @@ export class AuthController {
       const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!token)
         return res.status(401).send("Access Denied / Unauthorized request");
-      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
+      if (!(await this.service.verifyBearerToken(token, refresh))) {
         return res.status(401).send("Unauthorized request");
       }
       res.status(200).send("Welcome");
@@ -81,7 +81,7 @@ export class AuthController {
       const { token, refresh } = req.headers as { token: string, refresh: string };
       if (!token)
         return res.status(401).send("Access Denied / Unauthorized request");
-      if (!(await this.service.verifyBearerToken(token as string, refresh as string))) {
+      if (!(await this.service.verifyBearerToken(token, refresh))) {
         return res.status(401).send("Unauthorized request");
       }
       const { userId } = req.params;
