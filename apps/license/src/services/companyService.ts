@@ -6,7 +6,6 @@ import { Company } from "../models/company";
 import { Country } from "../types/countries";
 import { CompanyRepository } from "../repositories/companyRepository";
 import { RabbitMQService } from "./RabbitMQService";
-import { LicenseService } from "./licenseService";
 import { LicenseRepository } from "../repositories/licenseRepository";
 
 export class CompanyService {
