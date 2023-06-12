@@ -140,7 +140,7 @@ export class BankAccountService {
     }
   };
 
-  userIsAdmin = async (token: string) => {
+  userIsAdmin = async (token: string): Promise<boolean> => {
     try {
       return await this.jwtAuth.userIsAdmin(token); 
     } catch (error) {

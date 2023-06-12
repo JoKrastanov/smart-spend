@@ -71,7 +71,7 @@ export class BankAccountController {
       }
       const { companyId, department } = req.params;
       const userIsAdmin = await this.service.userIsAdmin(token);
-      const bankAccounts = userIsAdmin ? await this.service.getByCompany(companyId) : await this.service.getByCompanyAndDepartment(companyId, department);
+      const bankAccounts = userIsAdmin === true ? await this.service.getByCompany(companyId) : await this.service.getByCompanyAndDepartment(companyId, department);
       if (!bankAccounts) {
         res.status(404).json({ message: "No bank accounts found." });
         return;
