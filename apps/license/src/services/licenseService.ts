@@ -24,7 +24,9 @@ export class LicenseService {
     this.companyService = new CompanyService();
     if (config.server.environment === "test") return;
     this.rabbitMQService = new RabbitMQService();
-    this.init().catch((err) => console.log("Error connecting to message broker", err));
+    this.init().catch((err) =>
+      console.log("Error connecting to message broker", err)
+    );
   }
 
   private init = async () => {
@@ -38,8 +40,8 @@ export class LicenseService {
   };
 
   verifyBearerToken = async (
-    authorization: string | string[],
-    refresh: string | string[]
+    authorization: string,
+    refresh: string
   ): Promise<boolean> => {
     if (config.server.environment === "development") {
       return true;

@@ -21,7 +21,9 @@ export class BankAccountService {
     this.jwtAuth = JWTAuthentication();
     if (config.server.environment === "test") return;
     this.rabbitMQService = new RabbitMQService();
-    this.init().catch((err) => console.log("Error connecting to message broker", err));
+    this.init().catch((err) =>
+      console.log("Error connecting to message broker", err)
+    );
   }
 
   private init = async () => {
@@ -29,28 +31,38 @@ export class BankAccountService {
       await this.rabbitMQService.connect();
       await this.rabbitMQService.createQueue("bank-accounts");
       await this.rabbitMQService.createQueue("delete-bankaccounts");
-      await this.rabbitMQService.consumeMessages("delete-bankaccounts", async (message) => {
-        await this.deleteBankAccounts(message.companyId);
-      });
-      await this.rabbitMQService.consumeMessages("bank-accounts", async (message) => {
-        console.log("Adding new bank account", message)
-        const bankBalance = new Money(message.balance, message.currency, true);
-        await this.addBankAccount(
-          message.companyId,
-          message.name,
-          message.department,
-          message.IBAN,
-          bankBalance
-        );
-      });
+      await this.rabbitMQService.consumeMessages(
+        "delete-bankaccounts",
+        async (message) => {
+          await this.deleteBankAccounts(message.companyId);
+        }
+      );
+      await this.rabbitMQService.consumeMessages(
+        "bank-accounts",
+        async (message) => {
+          console.log("Adding new bank account", message);
+          const bankBalance = new Money(
+            message.balance,
+            message.currency,
+            true
+          );
+          await this.addBankAccount(
+            message.companyId,
+            message.name,
+            message.department,
+            message.IBAN,
+            bankBalance
+          );
+        }
+      );
     } catch (error) {
       console.log(error);
     }
   };
 
   verifyBearerToken = async (
-    authorization: string | string[],
-    refresh: string | string[]
+    authorization: string,
+    refresh: string
   ): Promise<boolean> => {
     if (config.server.environment === "development") {
       return true;
@@ -142,11 +154,11 @@ export class BankAccountService {
 
   userIsAdmin = async (token: string): Promise<boolean> => {
     try {
-      return await this.jwtAuth.userIsAdmin(token); 
+      return await this.jwtAuth.userIsAdmin(token);
     } catch (error) {
-      return false
+      return false;
     }
-  }
+  };
 
   getByCompany = async (companyId: string): Promise<BankAccount[]> => {
     try {
@@ -180,13 +192,17 @@ export class BankAccountService {
     }
   };
 
-  getByCompanyAndDepartment = async (companyId: string, department: string): Promise<BankAccount[]> => {
+  getByCompanyAndDepartment = async (
+    companyId: string,
+    department: string
+  ): Promise<BankAccount[]> => {
     try {
       const bankAccountsToReturn = [];
-      const bankAccounts = await this.bankAccountRepository.getByCompanyAndDepartment(
-        companyId,
-        department
-      );
+      const bankAccounts =
+        await this.bankAccountRepository.getByCompanyAndDepartment(
+          companyId,
+          department
+        );
       if (!bankAccounts) {
         return [];
       }

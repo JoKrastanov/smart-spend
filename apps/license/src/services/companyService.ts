@@ -34,8 +34,8 @@ export class CompanyService {
   };
 
   verifyBearerToken = async (
-    authorization: string | string[],
-    refresh: string | string[]
+    authorization: string,
+    refresh: string
   ): Promise<boolean> => {
     if (config.server.environment === "development") {
       return true;
