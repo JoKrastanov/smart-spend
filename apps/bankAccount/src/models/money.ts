@@ -5,7 +5,7 @@ export class Money {
   currency: CurrencyCode;
 
   constructor(amount: number, currency: CurrencyCode, newMoney: boolean) {
-    this.amount = newMoney ? amount * 100 : amount;
+    this.amount = newMoney === true ? amount * 100 : amount;
     this.currency = currency;
   }
 
