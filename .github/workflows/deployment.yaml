@@ -119,7 +119,7 @@ jobs:
           kubectl apply -f secrets/shared-secrets.yaml -f configs/license-config.yaml
   
   deploy-ingress:
-    needs: create-cluster
+    needs: [deploy-license, deploy-bank, deploy-identity]
     runs-on: ubuntu-latest
     steps:
 
