@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: bankaccount-service-container
-          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/bankaccount:latest
+          image: europe-west4-docker.pkg.dev/smartspend/smart-spend/bank-account:latest
           ports:
             - containerPort: 6001
           envFrom:
