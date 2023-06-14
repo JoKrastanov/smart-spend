@@ -5,7 +5,7 @@ import express, { Express } from "express";
 import { bankAccountRouter } from "./routes/bankAccountRoutes";
 import config from "../config";
 
-const app: Express = express();
+const app = express();
 
 // * CORS Policy
 app.use(

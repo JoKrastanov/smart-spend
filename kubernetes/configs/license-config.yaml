@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: license-service-deployment
+  name: license-service
   labels:
     app: license-service
 spec:
@@ -38,7 +38,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: license-service-deployment
+    name: license-service
   minReplicas: 1
   maxReplicas: 2
   metrics:

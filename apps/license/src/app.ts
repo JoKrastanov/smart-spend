@@ -7,7 +7,7 @@ import config from '../config';
 import { licenseRouter } from "./routes/licenseRoutes";
 import { companyRouter } from "./routes/companyRoutes";
 
-const app: Express = express();
+const app = express();
 
 // * CORS Policy
 app.use(

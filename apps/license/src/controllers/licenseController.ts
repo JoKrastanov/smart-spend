@@ -125,7 +125,7 @@ export class LicenseController {
         department,
         accountType,
       } = req.body;
-      const registerStatus = this.service.registerEmployee(
+      const registerStatus = await this.service.registerEmployee(
         firstName,
         lastName,
         address,

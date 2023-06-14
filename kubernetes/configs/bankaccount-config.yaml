@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bankaccount-service-deployment
+  name: bankaccount-service
   labels:
     app: bankaccount-service
 spec:
@@ -40,9 +40,9 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: bankaccount-service-deployment
+    name: bankaccount-service
   minReplicas: 1
-  maxReplicas: 2
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:

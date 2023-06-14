@@ -6,7 +6,7 @@ import config from '../config';
 
 import { authRoutes } from "./routes/authRoutes";
 
-const app: Express = express();
+const app = express();
 
 // * CORS Policy
 app.use(
