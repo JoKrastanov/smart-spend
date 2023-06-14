@@ -62,11 +62,18 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: identity-service
+  name: identity-service-deployment
+  namespace: default
 spec:
+  clusterIP: 10.14.128.2
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 4000
   selector:
     app: identity-service
-  ports:
-    - protocol: TCP
-      port: 4000
-      targetPort: 4000
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+      - ip: 34.90.128.82
