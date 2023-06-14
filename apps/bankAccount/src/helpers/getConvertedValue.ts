@@ -10,7 +10,7 @@ export const getConvertedValue = async (
   from: CurrencyCode,
   to: CurrencyCode,
   amount: number
-): Promise<Money | Error> => {
+): Promise<Money> => {
   const getUrl: string =
     requestURL + `convert?from=${from}&to=${to}&amount=${amount}&places=2`;
   try {
@@ -18,6 +18,7 @@ export const getConvertedValue = async (
     const convertedMoney = new Money(response.data.result, to, true);
     return convertedMoney;
   } catch (error) {
-    return new Error(error);
+    console.log(error);
+    throw error;
   }
 };

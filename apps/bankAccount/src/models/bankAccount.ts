@@ -71,7 +71,6 @@ export class BankAccount {
           this.balance.currency,
           money.getAmountConvertable()
         );
-        if (!(convertedMoney instanceof Money)) return;
         this.balance.add(convertedMoney.amount);
         return true;
       }
