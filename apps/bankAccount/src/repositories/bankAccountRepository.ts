@@ -1,9 +1,7 @@
-import mongoose from "mongoose";
 import { BankAccount } from "../models/bankAccount";
 import { Money } from "../models/money";
 import { BankAccountCollection } from "../schemas/bankAccountSchema";
 import { CurrencyCode } from "../types/currencies";
-import config from "../../config";
 
 export class BankAccountRepository {
   private repository = BankAccountCollection;
@@ -87,7 +85,6 @@ export class BankAccountRepository {
 
   update = async (bankAccount: BankAccount): Promise<BankAccount> => {
     try {
-      await mongoose.connect(config.mongo.url, { retryWrites: true, w: "majority" })
       const updateProperties = {
         id: bankAccount.id,
         companyId: bankAccount.companyId,
@@ -109,8 +106,6 @@ export class BankAccountRepository {
       return bankAccountToUpdate;
     } catch (error) {
       throw error;
-    } finally {
-      mongoose.disconnect()
     }
   };
 
