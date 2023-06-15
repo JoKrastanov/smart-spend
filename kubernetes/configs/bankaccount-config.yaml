@@ -5,7 +5,7 @@ metadata:
   labels:
     app: bankaccount-service
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: bankaccount-service
@@ -43,7 +43,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: bankaccount-service
-  minReplicas: 1
+  minReplicas: 2
   maxReplicas: 5
   metrics:
     - type: Resource
@@ -51,13 +51,13 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 20
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 20
 
 ---
 
