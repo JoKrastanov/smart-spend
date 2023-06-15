@@ -22,7 +22,7 @@ app.use("/bank", bankAccountRouter);
 
 app.listen(config.server.port, async () => {
   mongoose
-    .connect(config.mongo.url, { retryWrites: true, w: "majority" })
+    .connect(config.mongo.url, { retryWrites: true, minPoolSize: 50 })
     .then(() => {
       console.log("Connected to mongoDB.");
     })

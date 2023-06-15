@@ -132,20 +132,26 @@ export class BankAccountService {
         return false;
       }
       const transactionMoney = new Money(amount, sender.balance.currency, true);
+      console.log(
+        `Transaction from ${IBANfrom} to ${IBANto} valued: ${amount} ${sender.balance.currency}`
+      );
       const senderStatus = await sender.send(transactionMoney);
       const receiverStatus = await receiver.receive(transactionMoney);
+      if (!senderStatus || !receiverStatus) {
+        return false;
+      }
       const newTransaction = new Transaction(
         IBANfrom,
         IBANto,
         amount,
         sender.balance.currency
       );
-      if (!senderStatus || !receiverStatus) {
-        return false;
-      }
-      await this.bankAccountRepository.update(sender);
-      await this.bankAccountRepository.update(receiver);
-      return await this.createTransaction(newTransaction);
+      const [send, receive, transaction] = await Promise.all([
+        await this.bankAccountRepository.update(sender),
+        await this.bankAccountRepository.update(receiver),
+        await this.createTransaction(newTransaction),
+      ]);
+      return transaction
     } catch (error) {
       console.log(error);
       return false;
