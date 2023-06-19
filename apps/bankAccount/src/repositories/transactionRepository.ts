@@ -36,7 +36,8 @@ export class TransactionRepository {
       try {
         const sql = `SELECT * FROM bank_transactions WHERE senderIBAN=${mysql.escape(
           IBAN
-        )} OR receiverIBAN=${mysql.escape(IBAN)}`;
+        )} OR receiverIBAN=${mysql.escape(IBAN)}
+        LIMIT(100)`;
 
         config.sql.connection.query(sql, (err, result) => {
           if (err) {
